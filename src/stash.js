@@ -32,6 +32,12 @@ export function stashDel(id) {
   return list;
 }
 
+export function stashUp(id, patch) {
+  const list = stashList().map((x) => (x.id === id ? { ...x, ...patch } : x));
+  localStorage.setItem(KEY, JSON.stringify(list));
+  return list;
+}
+
 export function stashExport() {
   return JSON.stringify({ app: "skillorbit", version: 1, items: stashList() }, null, 2);
 }

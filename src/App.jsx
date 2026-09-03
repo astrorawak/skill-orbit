@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { SKILLS, PATTERNS } from "./data";
 import { BEHAVIORS, TOOL_OPTS, generateSkill, validateDesc } from "./forge";
 import GALLERY from "./gallery";
-import { stashList, stashAdd, stashDel, stashExport, stashImport, parseSkillFile } from "./stash";
+import { stashList, stashAdd, stashDel, stashUp, stashExport, stashImport, parseSkillFile } from "./stash";
 import { getToken, getEmail, setSession, clearSession, register, login, syncUp, syncDown, forgotPassword, resetPassword, deleteAccount } from "./cloud";
 
 // mapping kategori galeri -> perilaku + alat (dipakai "Compose dari Galeri")
@@ -36,6 +36,7 @@ const ICONS = {
   box: "M21 8l-9-5-9 5v8l9 5 9-5V8Zm-9-3v5m0-5L3 8m9-3 9 3m-9 3 9-3m-9 3 0 9m0-9-9 3M3 8v8l9 5",
   tour: "M12 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4M13 16l5 2 4-6-5-1-4 5Zm-2 1-1.5 3 3-1.5",
   help: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
+  edit: "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z",
 };
 
 export default function App() {
@@ -820,6 +821,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
 
 function Arsip({ lang, onOpen, onRegistered, onHelp }) {
   const [items, setItems] = useState(stashList);
+  const [q, setQ] = useState("");
   const fileRef = useRef(null);
   const L = lang === "id" ? LID : LEN;
   const [msg, setMsg] = useState("");
@@ -898,9 +900,23 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
     setItems(stashList());
   }
   function remove(id) {
+    if (!window.confirm(L.arsipDelConfirm)) return;
     stashDel(id);
     reload();
   }
+  function renameIt(it) {
+    const nm = window.prompt(L.arsipRenPh, it.name);
+    if (!nm || !nm.trim() || nm.trim() === it.name) return;
+    stashUp(it.id, { name: nm.trim() });
+    reload();
+    setMsg(L.arsipRenamed + nm.trim());
+    setTimeout(() => setMsg(""), 1800);
+  }
+  const view = q.trim()
+    ? items.filter((it) =>
+        ((it.name || "") + " " + (it.desc || "")).toLowerCase().includes(q.trim().toLowerCase())
+      )
+    : items;
   function copyMd(md, nm) {
     navigator.clipboard?.writeText(md);
     setMsg(`${L.arsipCopied} ${nm}`);
@@ -1002,12 +1018,24 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
         <input ref={fileRef} type="file" accept="application/json,.json" style={{ display: "none" }} onChange={onImport} />
         {msg && <span className="loaded-note">{msg}</span>}
       </div>
+      <div className="arsip-search">
+        <input
+          className="inp"
+          type="search"
+          placeholder={L.arsipSearch}
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        {q.trim() && (
+          <button className="ghost sm" onClick={() => setQ("")}>{L.arsipClear}</button>
+        )}
+      </div>
 
-      {items.length === 0 ? (
-        <div className="muted gal-empty">— {L.arsipEmpty} —</div>
+      {view.length === 0 ? (
+        <div className="muted gal-empty">{q.trim() ? L.arsipNoHit : "— " + L.arsipEmpty + " —"}</div>
       ) : (
         <div className="stash-list">
-          {items.map((it) => (
+          {view.map((it) => (
             <div className="g-card stash-row" key={it.id}>
               <div className="stash-head">
                 <span className="stash-name">{it.name}</span>
@@ -1019,6 +1047,9 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
               {it.desc && <div className="gh-desc">{it.desc}</div>}
               <div className="stash-actions">
                 <button className="ghost sm" onClick={() => onOpen(it)}>{L.arsipRacik}</button>
+                <button className="ghost sm" onClick={() => renameIt(it)}>
+                  <Icon d={ICONS.edit} size={13} /> {L.arsipRename}
+                </button>
                 <button className="ghost sm" onClick={() => copyMd(it.md, it.name)}>
                   <Icon d={ICONS.copy} size={13} /> {L.arsipCopy}
                 </button>
@@ -1272,6 +1303,13 @@ const LID = {
   arsipCopy: "Salin",
   arsipDl: "Unduh",
   arsipDel: "Hapus",
+  arsipRename: "Ganti Nama",
+  arsipRenamed: "Nama diganti · ",
+  arsipDelConfirm: "Hapus skill ini selamanya?",
+  arsipRenPh: "Nama baru untuk skill ini",
+  arsipSearch: "Cari ARSIP (nama / isi)…",
+  arsipClear: "✕ Bersihkan",
+  arsipNoHit: "Tidak ada skill yang cocok.",
   arsipExport: "Ekspor JSON",
   arsipImport: "Impor JSON",
   arsipCopied: "Disalin: ",
@@ -1444,6 +1482,13 @@ const LEN = {
   arsipEmpty: "empty. Compose in FORGE and hit SAVE.",
   arsipRacik: "Re-compose →",
   arsipCopy: "Copy",
+  arsipSearch: "Search archive (name / content)…",
+  arsipClear: "✕ Clear",
+  arsipNoHit: "No matching skill.",
+  arsipRename: "Rename",
+  arsipRenamed: "Renamed · ",
+  arsipDelConfirm: "Delete this skill permanently?",
+  arsipRenPh: "New name for this skill",
   arsipDl: "Download",
   arsipDel: "Delete",
   arsipExport: "Export JSON",
