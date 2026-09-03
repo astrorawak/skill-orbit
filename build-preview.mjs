@@ -75,7 +75,7 @@ const html = `<!doctype html>
 </header>
 
 <main class="stage">
-  <div class="preview-banner">PRATINJAU STATIS — fitur interaktif penuh (TELUSUR GitHub + ARSIP) berjalan di aplikasi live</div>
+  <div class="preview-banner">PRATINJAU STATIS — fitur interaktif penuh (TELUSUR GitHub + ARSIP + AKUN ONLINE) berjalan di aplikasi live</div>
 
   <section class="panel"> <h2 class="pnl-title"><span style="color:var(--accent)">◆</span> FORGE · PERACIK SKILL</h2>
     <div class="out"><div class="out-head"><h3 class="pnl-title" style="color:var(--cyan)">PRATINJAU</h3>

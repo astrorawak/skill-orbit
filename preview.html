@@ -231,6 +231,21 @@ a{color:var(--cyan)}
   *{transition:none!important}
 }
 
+/* ---- akun online (cloud) ---- */
+.cloud-panel{margin:8px 0 14px;border:1px solid #22c55e33;background:#0b0f0b;border-radius:8px;padding:10px 12px}
+.cloud-form{display:flex;flex-direction:column;gap:8px}
+.cloud-h{font-family:"Share Tech Mono",monospace;color:#22c55e;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.inp{background:#060807;border:1px solid #15432a;color:#d7ffe8;border-radius:6px;padding:7px 9px;font:inherit;font-size:13px;outline:none}
+.inp:focus{border-color:#22c55e}
+.cloud-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px}
+.cloud-row button[disabled]{opacity:.5;cursor:wait}
+.ghost.accent{border-color:#22c55e;color:#4ade80}
+.ghost.accent:hover{background:rgba(34,197,94,.12)}
+.ghost.sm.danger{border-color:#7f1d1d;color:#f87171}
+.ghost.sm.danger:hover{background:rgba(248,113,113,.12)}
+.cld-hint{font-size:11px;opacity:.72;margin:2px 0 0}
+.cloud-signed{display:flex;flex-direction:column;gap:8px}
+
   /* pratinjau khusus: tampilkan dua tab bersusun */
   .stage{display:block}
   .group2{display:grid;grid-template-columns:440px 1fr;gap:18px;align-items:start;margin-top:26px}
@@ -253,7 +268,7 @@ a{color:var(--cyan)}
 </header>
 
 <main class="stage">
-  <div class="preview-banner">PRATINJAU STATIS — fitur interaktif penuh (TELUSUR GitHub + ARSIP) berjalan di aplikasi live</div>
+  <div class="preview-banner">PRATINJAU STATIS — fitur interaktif penuh (TELUSUR GitHub + ARSIP + AKUN ONLINE) berjalan di aplikasi live</div>
 
   <section class="panel"> <h2 class="pnl-title"><span style="color:var(--accent)">◆</span> FORGE · PERACIK SKILL</h2>
     <div class="out"><div class="out-head"><h3 class="pnl-title" style="color:var(--cyan)">PRATINJAU</h3>
