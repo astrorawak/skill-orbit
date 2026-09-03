@@ -263,12 +263,13 @@ function Header({ tab, setTab, lang, setLang, onHome }) {
   );
 }
 
-function Field({ label, hint, children }) {
+function Field({ label, hint, note, children }) {
   return (
     <label className="field">
       <span className="flabel">{label}</span>
       {children}
       {hint ? <span className="fhint">{hint}</span> : null}
+      {note ? <span className="fnote">{note}</span> : null}
     </label>
   );
 }
@@ -437,6 +438,14 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
   }
   const [ghInfo, setGhInfo] = useState("");
   const [loadedFrom, setLoadedFrom] = useState("");
+  const [done, setDone] = useState({});
+  function focusField(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
   function applyGallery() {
     if (!gal.length) return;
     const picked = GALLERY.filter((g) => gal.includes(g.slug));
@@ -510,6 +519,31 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         {loadedFrom && (
           <div className="draft-note">
             <b>⟡ {L.draftTag}</b> {L.draftHint} <span className="muted">({loadedFrom})</span>
+          </div>
+        )}
+        {loadedFrom && (
+          <div className="mine">
+            <div className="mine-head"><span className="grp">{L.mmTitle}</span></div>
+            <p className="mine-sub">{L.mmSub}</p>
+            {[
+              { id: "f-name", t: L.mmName, h: L.mmNameH },
+              { id: "f-desc", t: L.mmDesc, h: L.mmDescH },
+              { id: "f-tags", t: L.mmTags, h: L.mmTagsH },
+              { id: "f-summ", t: L.mmBody, h: L.mmBodyH },
+            ].map((it, i) => (
+              <div className={done[it.id] ? "mine-row done" : "mine-row"} key={it.id}>
+                <label className="mine-ck">
+                  <input
+                    type="checkbox"
+                    checked={!!done[it.id]}
+                    onChange={() => setDone({ ...done, [it.id]: !done[it.id] })}
+                  />
+                  <span>{i + 1}. {it.t}</span>
+                </label>
+                <span className="mine-hint">{it.h}</span>
+                <button className="ghost sm mine-go" onClick={() => focusField(it.id)}>{L.mmFocus}</button>
+              </div>
+            ))}
           </div>
         )}
         <div className="block gal">
@@ -620,32 +654,34 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
             </div>
           )}
         </div>
-        <Field label={L.nLabel}>
-          <input value={name} onChange={(e) => setName(e.target.value)} spellCheck="false" />
+        <Field label={L.nLabel} note={L.nNote}>
+          <input id="f-name" value={name} onChange={(e) => setName(e.target.value)} spellCheck="false" />
         </Field>
         <Field
           label={L.dLabel}
           hint={<span className={v.ok ? "s ok" : "s bad"}>{v.len}{L.dLimit}</span>}
+          note={L.dNote}
         >
-          <textarea rows={2} value={desc} onChange={(e) => setDesc(e.target.value)} spellCheck="false" />
+          <textarea id="f-desc" rows={2} value={desc} onChange={(e) => setDesc(e.target.value)} spellCheck="false" />
         </Field>
         <div className="row2">
-          <Field label="author">
+          <Field label="author" note={L.authorNote}>
             <input value={author} onChange={(e) => setAuthor(e.target.value)} />
           </Field>
-          <Field label="tags">
-            <input value={tags} onChange={(e) => setTags(e.target.value)} />
+          <Field label="tags" note={L.tagsNote}>
+            <input id="f-tags" value={tags} onChange={(e) => setTags(e.target.value)} />
           </Field>
         </div>
         <Field label={L.rLabel}>
           <input value={related} onChange={(e) => setRelated(e.target.value)} placeholder={L.rPh} />
         </Field>
-        <Field label={L.sLabel}>
-          <textarea rows={3} value={summary} onChange={(e) => setSummary(e.target.value)} placeholder={L.sPh} />
+        <Field label={L.sLabel} note={L.sNote}>
+          <textarea id="f-summ" rows={3} value={summary} onChange={(e) => setSummary(e.target.value)} placeholder={L.sPh} />
         </Field>
 
         <div className="block">
           <span className="grp">{L.behav}</span>
+          <p className="fnote">{L.behavNote}</p>
           <div className="chips">
             {BEHAVIORS.map((b) => (
               <Chip key={b.id} active={behaviors.includes(b.id)} onClick={() => toggle(behaviors, setBehaviors, b.id)}>
@@ -656,6 +692,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         </div>
         <div className="block">
           <span className="grp">{L.tools}</span>
+          <p className="fnote">{L.toolsNote}</p>
           <div className="chips">
             {TOOL_OPTS.map((t) => (
               <Chip key={t.id} active={tools.includes(t.id)} onClick={() => toggle(tools, setTools, t.id)}>
@@ -1049,6 +1086,24 @@ const LID = {
   helpClose: "Mengerti",
   draftTag: "MERACIK DI SINI",
   draftHint: "Draf sudah dimuat. Ubah kolom-kolom di panel kiri ini (nama, deskripsi, tag, isi) — pratinjau di kanan menyesuaikan otomatis.",
+  nNote: "Lowercase + tanda hubung. Ini nama file & pemicu skill.",
+  dNote: "1 kalimat: apa yang skill lakukan. Yang tampil di galeri & di kolom pemicu.",
+  authorNote: "Kamu / tim pembuatnya.",
+  tagsNote: "Kata kunci pencarian — pisah koma.",
+  sNote: "Isi utama: langkah & perilaku yang dijalankan. Tuliskan cara kamu bekerja di sini (boleh sesingkat mungkin).",
+  behavNote: "2–4 kata pembentuk logika: bagaimana agent bersikap.",
+  toolsNote: "Alat yang diizinkan dipakai skill ini (centang yang relevan).",
+  mmTitle: "JADIKAN MILIKMU — 4 yang layak kau sentuh",
+  mmSub: "Draf ini dari repo orang lain. Untuk menjadikannya skill-mu, setel bagian di bawah — yang tak kau sentuh biarkan apa adanya, tetap valid.",
+  mmName: "Nama",
+  mmNameH: "ganti jadi nama kasusmu",
+  mmDesc: "Deskripsi",
+  mmDescH: "tulis dengan caramu bekerja (≤60)",
+  mmTags: "Tags",
+  mmTagsH: "tambah sektor / bahasa / alatmu",
+  mmBody: "Isi & langkah",
+  mmBodyH: "ubah urutan & contohnya sesuai caramu",
+  mmFocus: "Fokus ▸",
   helpFull: "Buka panduan lengkap (tab baru) ↗",
   helpPersist: "Tombol Panduan (?) selalu ada di pojok header tiap halaman — buka kapan pun.",
   HELP_T: { home: "Beranda", forge: "FORGE · racik skill", radar: "RADAR · tren", arsip: "ARSIP & akun" },
@@ -1199,6 +1254,24 @@ const LEN = {
   helpClose: "Got it",
   draftTag: "COMPOSE HERE",
   draftHint: "Draft loaded. Edit the fields in this left panel (name, description, tags, body) — the preview on the right updates automatically.",
+  nNote: "Lowercase, hyphenated. This becomes the file name & skill trigger.",
+  dNote: "One sentence: what the skill does. Shown in the gallery & as trigger.",
+  authorNote: "You / the maker team.",
+  tagsNote: "Search keywords — comma-separated.",
+  sNote: "The main body: steps & behaviours it runs. Write how you work here (keep it short if you like).",
+  behavNote: "2–4 words shaping the logic: how the agent behaves.",
+  toolsNote: "Tools this skill may use (tick what's relevant).",
+  mmTitle: "MAKE IT YOURS — 4 worth touching",
+  mmSub: "This draft is from someone else's repo. To turn it into your skill, tweak the bits below — leave the rest as-is, it stays valid.",
+  mmName: "Name",
+  mmNameH: "rename to your case",
+  mmDesc: "Description",
+  mmDescH: "write in your own way of working (≤60)",
+  mmTags: "Tags",
+  mmTagsH: "add your sector / language / tools",
+  mmBody: "Body & steps",
+  mmBodyH: "reorder & swap examples to your workflow",
+  mmFocus: "Focus ▸",
   helpFull: "Open the full guide (new tab) ↗",
   helpPersist: "The Guide (?) button stays in the corner of each page's header — open it anytime.",
   HELP_T: { home: "Home", forge: "FORGE · compose", radar: "RADAR · trends", arsip: "ARSIP & account" },
