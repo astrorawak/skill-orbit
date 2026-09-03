@@ -1,0 +1,99 @@
+<?php
+// SKILL//ORBIT — akun online API (PHP). Kredensial produksi.
+declare(strict_types=1);
+
+const DB_HOST = 'srv1868.hstgr.io';
+const DB_NAME = 'u864726623_skillorbit';
+const DB_USER = 'u864726623_skillorbit';
+const DB_PASS = 'k8Qz4Tv7Xm2Wp9Rt5Ls6Nb3Hc1Yd0';
+const JWT_SECRET = '4f8eQm2xLz9TvK7Nb3Yc5Wp6Rj0Hs1Ad';
+const TOKEN_TTL = 60 * 60 * 24 * 30; // 30 hari
+
+// Asal aplikasi frontend (GitHub Pages). '*' membuka akses semua origin.
+const ALLOW_ORIGIN = '*';
+
+function db(): PDO {
+    static $pdo = null;
+    if ($pdo === null) {
+        $hosts = [DB_HOST, 'localhost', '127.0.0.1'];
+        $last = null;
+        foreach ($hosts as $h) {
+            try {
+                $pdo = new PDO(
+                    "mysql:host=$h;dbname=" . DB_NAME . ";charset=utf8mb4;connect_timeout=6",
+                    DB_USER, DB_PASS,
+                    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+                );
+                return $pdo;
+            } catch (Throwable $e) { $last = $e; }
+        }
+        throw $last;
+    }
+    return $pdo;
+}
+
+// Bootstrap skema (idempotent).
+function ensureSchema(): void {
+    db()->exec("CREATE TABLE IF NOT EXISTS users (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(190) NOT NULL UNIQUE,
+        username VARCHAR(120) NOT NULL DEFAULT '',
+        pw_hash VARCHAR(255) NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    db()->exec("CREATE TABLE IF NOT EXISTS skills (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        user_id INT UNSIGNED NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        lang VARCHAR(8) NOT NULL DEFAULT 'id',
+        md MEDIUMTEXT NOT NULL,
+        src VARCHAR(500) NOT NULL DEFAULT '',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        KEY idx_user (user_id),
+        CONSTRAINT fk_skills_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+function b64u(string $s): string {
+    return rtrim(strtr(base64_encode($s), '+/', '-_'), '=');
+}
+function b64u_decode(string $s): string {
+    return base64_decode(strtr($s, '-_', '+/'));
+}
+function jwt_sign(string $payload_b64): string {
+    return hash_hmac('sha256', $payload_b64, JWT_SECRET, true);
+}
+function make_token(int $uid, string $email): string {
+    $h = b64u(json_encode(['alg'=>'HS256','typ'=>'JWT']));
+    $p = b64u(json_encode(['sub'=>$uid, 'email'=>$email, 'exp'=>time()+TOKEN_TTL]));
+    return "$h.$p." . b64u(jwt_sign("$h.$p"));
+}
+function verify_token(?string $tok): ?array {
+    if (!$tok) return null;
+    $parts = explode('.', $tok);
+    if (count($parts) !== 3) return null;
+    [$h,$p,$s] = $parts;
+    if (!hash_equals(b64u(jwt_sign("$h.$p")), $s)) return null;
+    $data = json_decode(b64u_decode($p), true);
+    if (!$data || !isset($data['exp']) || $data['exp'] < time()) return null;
+    return $data;
+}
+
+function json_out(int $code, array $data): void {
+    http_response_code($code);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+    exit;
+}
+function body_json(): array {
+    $raw = file_get_contents('php://input');
+    $d = json_decode($raw, true);
+    return is_array($d) ? $d : [];
+}
+function auth_user(): array {
+    $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $tok = preg_match('/^Bearer\s+(.+)$/i', $hdr, $m) ? trim($m[1]) : null;
+    $d = $tok ? verify_token($tok) : null;
+    if (!$d) json_out(401, ['error'=>'unauthorized']);
+    return $d;
+}
