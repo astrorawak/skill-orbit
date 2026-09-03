@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panduan Lengkap — ARSIP · Koleksi & Akun</title>
+<meta name="description" content="Panduan lengkap memakai ARSIP: kelola koleksi skill, akun online, backup & sinkronisasi antar perangkat, lupa sandi, plus FAQ & glosarium." />
+<style>
+:root{--bg:#05080f;--panel:#0a1120;--line:#1c3350;--em:#22C55E;--cy:#22d3ee;--txt:#e6edf7;--muted:#8ea3bd;--mono:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(34,197,94,.10),transparent 60%),
+  radial-gradient(900px 500px at 0% 110%,rgba(34,211,238,.07),transparent 55%),
+  var(--bg);color:var(--txt);line-height:1.75;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:-1;background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);opacity:.5}
+.wrap{max-width:920px;margin:0 auto;padding:26px 18px 110px}
+a{color:var(--cy);text-decoration:none}
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);letter-spacing:.5px;font-size:14px;color:var(--em)}
+.brand b{color:#fff;font-weight:800}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+.back{font-size:13px;border:1px solid var(--line);padding:7px 13px;border-radius:999px;color:var(--txt)}
+.back:hover{border-color:var(--em);color:var(--em)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--em);text-transform:uppercase;margin:0 0 6px}
+h1{font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--em)}
+.lead{color:var(--muted);font-size:16px;max-width:680px;margin:0 0 8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.meta b{color:var(--em);font-weight:700}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.jump a{font-size:12px;font-family:var(--mono);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted)}
+.jump a:hover{border-color:var(--em);color:var(--em)}
+h2{font-size:21px;margin:56px 0 8px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;scroll-margin-top:20px}
+h2 .n{font-family:var(--mono);color:var(--em);font-size:13px;border:1px solid var(--em);border-radius:6px;padding:2px 8px;white-space:nowrap}
+h3{font-size:16px;margin:0 0 6px;color:#fff}
+.card{background:linear-gradient(180deg,#0c1526,#091020);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:10px 0}
+.step{display:grid;grid-template-columns:58px 1fr;gap:16px;position:relative}
+.step+.step{margin-top:18px}
+.num{font-family:var(--mono);font-size:30px;font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(34,197,94,.65);line-height:1;text-align:center;padding-top:2px}
+.whatwhy{font-size:13.5px;color:#c9d6e8;margin:8px 0 0}
+.whatwhy b{color:var(--cy);font-weight:700}
+.check{font-size:13px;color:#0f141f;background:#22C55E;border-radius:6px;padding:2px 9px;font-weight:800;display:inline-block;font-family:var(--mono);margin-right:8px}
+.checkline{font-size:13.5px;color:#bfe7cd;background:rgba(34,197,94,.07);border:1px dashed rgba(34,197,94,.4);border-radius:8px;padding:8px 12px;margin-top:8px}
+.tip{font-size:13.5px;color:#a9c8e8;background:rgba(34,211,238,.06);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.tip b{color:var(--cy);font-weight:700}
+.warn{font-size:13.5px;color:#ffe0b3;background:rgba(245,158,11,.07);border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.warn b{color:#f5b44e;font-weight:700}
+.uc{display:grid;gap:14px}
+.uc .card{border-color:rgba(34,211,238,.28)}
+.uc h4{margin:0 0 4px;font-size:15px;color:var(--cy);font-family:var(--mono)}
+.uc p{margin:4px 0 8px;color:var(--muted);font-size:13.5px}
+.uc ul{margin:8px 0 0;padding-left:22px;color:#c9d6e8}
+.uc li{margin:6px 0}
+.uc ul b{color:#fff}
+.code{font-family:var(--mono);background:#060b15;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px;color:var(--em)}
+.q{background:rgba(34,197,94,.04);border-left:3px solid var(--line)}
+.q h4{margin:0 0 4px;color:#fff;font-size:15px}
+.q h4::before{content:"Q · ";color:var(--em);font-family:var(--mono)}
+.q p{margin:4px 0 0;color:#c9d6e8;font-size:14px}
+.q b{color:var(--em)}
+.gloss .term{font-size:14px;margin:8px 0}
+.gloss .term b{color:var(--cy);font-family:var(--mono)}
+.gloss .term span{color:#c9d6e8}
+.bottom{text-align:center;margin-top:60px}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--em);color:#04110a;font-weight:800;padding:14px 24px;border-radius:10px;font-size:15px;box-shadow:0 10px 30px -10px rgba(34,197,94,.6)}
+.cta:hover{filter:brightness(1.08)}
+.foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:11px;color:#5d7089;letter-spacing:1px}
+@media(max-width:560px){h1{font-size:26px}.step{grid-template-columns:44px 1fr}.num{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="./">✦ SKILL<b>//ORBIT</b></a>
+    <a class="back" href="./">← Kembali ke aplikasi</a>
+  </div>
+
+  <p class="kicker">Panduan Lengkap · Modul 3</p>
+  <h1>ARSIP — <em>Koleksi & Akun</em></h1>
+  <p class="lead">ARSIP adalah rumah bagi semua skill yang kamu racik di FORGE. Di sini kamu mengelola koleksi dan — secara <b>opsional</b> — menyambungkan <b>akun online</b> agar skill bisa dibawa ke perangkat mana pun. Panduan ini menjelaskan tiap langkah dengan rinci.</p>
+  <div class="meta">
+    <span>⏱ ≈ 6–7 menit baca</span><span>🎯 Semua pemula</span><span>🔐 Akun opsional, bukan wajib</span>
+  </div>
+
+  <div class="jump">
+    <a href="#koleksi">01 · Lihat koleksi</a>
+    <a href="#daftar">02 · Buat akun</a>
+    <a href="#login">03 · Masuk</a>
+    <a href="#lupa">04 · Lupa sandi</a>
+    <a href="#sin">05 · Sinkron antar perangkat</a>
+    <a href="#kelola">06 · Keluar / hapus akun</a>
+    <a href="#bts">07 · Di balik layar</a>
+    <a href="#uc">08 · Use case</a>
+    <a href="#faq">09 · Tanya-jawab</a>
+    <a href="#glos">10 · Glosarium</a>
+  </div>
+
+  <div class="card" style="border-color:rgba(34,197,94,.4)">
+    <p style="margin:0"><b>Catatan paling penting:</b> <b>tanpa login pun semua fitur inti terbuka.</b> Akun online hanyalah lapisan tambahan untuk <b>backup &amp; sinkronisasi antar perangkat</b>. Koleksi yang tersimpan di perangkat <b>tidak hilang</b> saat kamu login atau keluar akun.</p>
+  </div>
+
+  <h2 id="koleksi"><span class="n">01</span> Buka ARSIP &amp; lihat koleksimu</h2>
+  <div class="card step">
+    <div class="num">1</div>
+    <div>
+      <h3>Masuk dari Beranda</h3>
+      <p>Klik kartu <b>“ARSIP — koleksi”</b> atau tab <b>ARSIP</b>. Semua skill yang pernah kamu simpan dari FORGE tampil di sini sebagai daftar/baris koleksi.</p>
+      <p class="whatwhy"><b>Yang bisa kamu lakukan pada sebuah skill:</b> <b>buka</b> (memindahkannya kembali ke FORGE untuk diubah), <b>lihat</b> isinya, atau <b>ekspor</b> sebagai berkas <span class="code">SKILL.md</span>.</p>
+      <p class="checkline"><span class="check">CEK BERHASIL</span> Skill yang kamu simpan tadi muncul dalam daftar koleksi.</p>
+    </div>
+  </div>
+
+  <h2 id="daftar"><span class="n">02</span> Buat akun (opsional tapi disarankan)</h2>
+  <div class="card step">
+    <div class="num">2</div>
+    <div>
+      <h3>Daftar dengan email &amp; sandi</h3>
+      <p>Tekan <b>“Daftar”</b>, isi alamat email dan sandi, lalu submit. Akun ini dipakai untuk <b>penyimpanan cloud</b>.</p>
+      <p class="whatwhy"><b>Tips keamanan:</b> gunakan sandi yang kuat &amp; unik (kombinasi huruf, angka, simbol). Sesi yang dibuat bertahan hingga 30 hari, jadi tidak perlu login ulang tiap hari.</p>
+      <p class="tip"><b>Setelah daftar:</b> jika ini akun baru, aplikasi otomatis menampilkan <b>tur singkat</b> sebagai sambutan — ikuti sampai akhir untuk mengenal seluruh modul.</p>
+      <p class="checkline"><span class="check">CEK BERHASIL</span> Status berubah menjadi “masuk”, dan tombol simpan-ke-cloud kini aktif.</p>
+    </div>
+  </div>
+
+  <h2 id="login"><span class="n">03</span> Masuk (Login)</h2>
+  <div class="card step">
+    <div class="num">3</div>
+    <div>
+      <h3>Masuk untuk mengakses sinkronisasi</h3>
+      <p>Tekan <b>“Masuk”</b>, isi email &amp; sandi. Bila benar, kamu terhubung ke akun dan bisa menyimpan/mengambil skill dari cloud.</p>
+      <p class="warn"><b>Perhatian:</b> login hanya di perangkat yang kamu percayai. Gunakan tombol <b>Keluar</b> jika perangkat dipakai bergantian, agar akun tidak terbuka di sembarang tempat.</p>
+      <p class="checkline"><span class="check">CEK BERHASIL</span> Nama akun/email tampil sebagai status masuk.</p>
+    </div>
+  </div>
+
+  <h2 id="lupa"><span class="n">04</span> Lupa sandi?</h2>
+  <div class="card step">
+    <div class="num">4</div>
+    <div>
+      <h3>Reset via email</h3>
+      <p>Klik <b>“Lupa sandi?”</b> → isi email yang terdaftar → sistem mengirim <b>kode 6 digit</b> ke email itu (via Gmail) → masukkan kode → buat sandi baru.</p>
+      <p class="whatwhy"><b>Kenapa kode:</b> untuk memastikan hanya pemilik email itu yang bisa mengganti sandi. Kode <b>berlaku 15 menit</b>, jadi segera gunakan.</p>
+      <p class="warn"><b>Belum terima email?</b> Cek folder spam, pastikan email kamu benar (kode masuk <span class="code">astrorawak@gmail.com</span> dikirim dari Gmail), lalu coba lagi. Bila tetap tidak ada, halaman menampilkan kode cadangan langsung di aplikasi sebagai fallback.</p>
+      <p class="checkline"><span class="check">CEK BERHASIL</span> Setelah memasukkan kode, kamu bisa menetapkan sandi baru dan masuk.</p>
+    </div>
+  </div>
+
+  <h2 id="sin"><span class="n">05</span> Bawa skill ke perangkat lain</h2>
+  <div class="card step">
+    <div class="num">5</div>
+    <div>
+      <h3>Simpan ke cloud, lalu ambil di tempat lain</h3>
+      <p>Dengan akun yang sama, skill yang kamu simpan ke cloud bisa diambil/di-sinkronkan di perangkat lain. Cocok saat pindah dari laptop ke handphone, atau ganti perangkat.</p>
+      <p class="whatwhy"><b>Kenapa lebih aman:</b> daftar skill-mu tidak lagi hanya bergantung pada satu perangkat — ada salinan cadangan di server.</p>
+      <p class="checkline"><span class="check">CEK BERHASIL</span> Masuk dengan akun sama di perangkat kedua → koleksi skill tersedia di sana.</p>
+    </div>
+  </div>
+
+  <h2 id="kelola"><span class="n">06</span> Kelola akun: Keluar / Hapus</h2>
+  <div class="card step">
+    <div class="num">6</div>
+    <div>
+      <h3>Keluar</h3>
+      <p><b>Keluar</b> = berhenti terhubung pada perangkat itu. Koleksi lokal tetap utuh; kamu bisa masuk lagi kapan saja.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">7</div>
+    <div>
+      <h3>Hapus akun</h3>
+      <p><b>Hapus akun</b> = menghapus data cloud milikmu (skill yang tersimpan di server). <b>Penting:</b> ini <b>hanya membersihkan data di server</b>; koleksi yang tersimpan lokal di perangkat tetap aman.</p>
+      <p class="warn"><b>Sebelum menghapus:</b> pastikan kamu sudah meng-ekspor / menyimpan ke lokal semua skill cloud yang ingin kamu pertahankan.</p>
+    </div>
+  </div>
+
+  <h2 id="bts"><span class="n">07</span> Di balik layar</h2>
+  <div class="card">
+    <ul style="margin:0 0 0 20px;color:#c9d6e8">
+      <li>Simpan lokal menulis ke penyimpanan perangkat; simpan cloud mengirim ke server SKILL//ORBIT lewat API yang terautentikasi.</li>
+      <li>Sandi disimpan dengan pengamanan kuat (hash); kode reset dibuat khusus bertahan 15 menit.</li>
+      <li>Sesi pertahanan 30 hari — kamu tidak perlu login ulang setiap saat, kecuali keluar / reset / hapus.</li>
+    </ul>
+  </div>
+
+  <h2 id="uc"><span class="n">08</span> Contoh use case</h2>
+  <div class="uc">
+    <div class="card">
+      <h4>USE CASE 1 · Pindah perangkat</h4>
+      <ul>
+        <li>Di laptop: racik skill, <b>SIMPAN</b>, lalu simpan juga ke cloud.</li>
+        <li>Di HP: buka ARSIP → <b>Masuk</b> dengan akun sama.</li>
+        <li>Ambil / periksa skill-nya — langsung tersedia.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 2 · Backup sebelum ganti perangkat</h4>
+      <ul>
+        <li>Masuk akun → pastikan semua skill tersimpan ke cloud.</li>
+        <li>Ganti/format perangkat → login lagi → tarik kembali semua.</li>
+        <li>Tidak ada skill yang hilang.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 3 · Bagi koleksi tim</h4>
+      <ul>
+        <li>Sebuah skill disimpan &amp; di-backup cloud.</li>
+        <li>Rekan masuk pakai akun bersama → ambil skill yang sama.</li>
+        <li>Semua memakai resep kerja yang konsisten.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="faq"><span class="n">09</span> Tanya-jawab yang sering</h2>
+  <div class="uc">
+    <div class="card q">
+      <h4>Apakah wajib punya akun?</h4>
+      <p>Tidak. Semua fitur inti (Forge, Radar, ARSIP lokal, panduan, tur) bisa dipakai <b>tanpa login</b>. Akun hanya untuk backup &amp; sinkronisasi.</p>
+    </div>
+    <div class="card q">
+      <h4>Apakah skill lokal hilang jika hapus akun?</h4>
+      <p>Tidak. Menghapus akun hanya menghapus data di server. Koleksi yang disimpan lokal di perangkat tetap ada.</p>
+    </div>
+    <div class="card q">
+      <h4>Bagaimana jika lupa email yang dipakai daftar?</h4>
+      <p>Kode reset dikirim ke email terdaftar; jika lupa email mana yang dipakai, hubungi pemelihara aplikasi dengan bukti kepemilikan.</p>
+    </div>
+    <div class="card q">
+      <h4>Sesi login berlaku berapa lama?</h4>
+      <p>30 hari. Kamu tidak diminta login ulang terus-menerus dalam periode itu.</p>
+    </div>
+    <div class="card q">
+      <h4>Apakah sandi aman?</h4>
+      <p>Ya — sandi disimpan dalam bentuk ter-hash (bukan teks asli) di server, dan dikirim lewat koneksi terenkripsi.</p>
+    </div>
+  </div>
+
+  <h2 id="glos"><span class="n">10</span> Glosarium</h2>
+  <div class="card gloss">
+    <p class="term"><b>ARSIP</b> <span>— modul koleksi semua skill yang kamu simpan.</span></p>
+    <p class="term"><b>Cloud</b> <span>— penyimpanan di server (internet), diakses lewat akun.</span></p>
+    <p class="term"><b>Login / Masuk</b> <span>— terhubung ke akun untuk memakai sinkronisasi.</span></p>
+    <p class="term"><b>Kode reset</b> <span>— 6 angka sementara (15 menit) dikirim ke email untuk mengganti sandi.</span></p>
+    <p class="term"><b>Sesi</b> <span>— masa berlaku login (30 hari) sebelum harus masuk lagi.</span></p>
+    <p class="term"><b>Sinkronisasi</b> <span>— menyamakan koleksi antar perangkat lewat cloud.</span></p>
+  </div>
+
+  <div class="bottom">
+    <a class="cta" href="./">← Kembali & kelola ARSIP</a>
+  </div>
+  <div class="foot">SKILL//ORBIT · PANDUAN ARSIP · ASTRORAWAK © GITHUB</div>
+</div>
+</body>
+</html>
