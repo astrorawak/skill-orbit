@@ -1,6 +1,18 @@
 import { useMemo, useState, useEffect } from "react";
 import { SKILLS, PATTERNS } from "./data";
 import { BEHAVIORS, TOOL_OPTS, generateSkill, validateDesc } from "./forge";
+import GALLERY from "./gallery";
+
+// mapping kategori galeri -> perilaku + alat (dipakai "Compose dari Galeri")
+function galMap(slug) {
+  const s = slug.toLowerCase();
+  if (/humaniz|unslop|prose|natur/.test(s)) return { bs: ["tajam"], ts: ["files"] };
+  if (/market|seo|sales|gtm|creative|twitter|scrap/.test(s)) return { bs: ["terukur", "cerita"], ts: ["web"] };
+  if (/whatsapp|pdf|docx|pptx|xlsx|slide|present/.test(s)) return { bs: ["terukur"], ts: ["files", "execute"] };
+  if (/search|research|source|evidence/.test(s)) return { bs: ["cerita", "bijak"], ts: ["web", "execute"] };
+  if (/superpower|lab|plan|brainstorm/.test(s)) return { bs: ["bijak", "tajam"], ts: ["files"] };
+  return { bs: ["terukur"], ts: ["files"] };
+}
 
 function Icon({ d, size = 18 }) {
   return (
@@ -94,6 +106,37 @@ function Forge({ lang }) {
   const [tools, setTools] = useState(["files", "execute"]);
   const [niche, setNiche] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [gal, setGal] = useState([]);
+  const [galQ, setGalQ] = useState("");
+  const galFiltered = GALLERY.filter(
+    (g) => g.slug.toLowerCase().includes(galQ.toLowerCase()) || g.desc.toLowerCase().includes(galQ.toLowerCase())
+  );
+  function applyGallery() {
+    if (!gal.length) return;
+    const picked = GALLERY.filter((g) => gal.includes(g.slug));
+    const slugName =
+      picked
+        .map((g) => g.slug)
+        .join("-")
+        .replace(/[^a-z0-9-]/g, "")
+        .slice(0, 40)
+        .replace(/-+$/, "") || "composed-skill";
+    setName(slugName);
+    let d = picked
+      .map((g) => g.desc)
+      .join(" + ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (d.length > 58) d = d.slice(0, 55).trimEnd() + "…";
+    setDesc(d);
+    const bs = new Set(), ts = new Set();
+    for (const g of picked) {
+      galMap(g.slug).bs.forEach((b) => bs.add(b));
+      galMap(g.slug).ts.forEach((t) => ts.add(t));
+    }
+    setBehaviors([...bs]);
+    setTools([...ts]);
+  }
 
   const v = validateDesc(desc);
   const markdown = useMemo(
@@ -136,6 +179,34 @@ function Forge({ lang }) {
         <h2 className="pnl-title">
           <Icon d={ICONS.gear} /> {L.forgeTitle}
         </h2>
+        <div className="block gal">
+          <div className="gal-head">
+            <span className="grp">{L.gal}</span>
+            <span className="gal-ctl">
+              <input className="gal-search" value={galQ} onChange={(e) => setGalQ(e.target.value)} placeholder={L.galPh} />
+              <button className="ghost sm" onClick={applyGallery} disabled={!gal.length}>
+                {L.galApply} ({gal.length})
+              </button>
+            </span>
+          </div>
+          <div className="gal-grid">
+            {galFiltered.map((g) => {
+              const on = gal.includes(g.slug);
+              return (
+                <button
+                  key={g.slug}
+                  className={on ? "g-card on" : "g-card"}
+                  onClick={() => setGal(on ? gal.filter((x) => x !== g.slug) : [...gal, g.slug])}
+                >
+                  <span className="g-name">{g.slug}</span>
+                  <span className="g-cat">{g.cat}</span>
+                  <span className="g-desc">{g.desc}</span>
+                </button>
+              );
+            })}
+            {galFiltered.length === 0 && <span className="muted gal-empty">— {L.galPhNo} —</span>}
+          </div>
+        </div>
         <Field label={L.nLabel}>
           <input value={name} onChange={(e) => setName(e.target.value)} spellCheck="false" />
         </Field>
@@ -211,6 +282,12 @@ function Radar() {
   const [q, setQ] = useState("");
   const [live, setLive] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // auto-muat angka live saat Radar pertama kali dibuka
+  useEffect(() => {
+    refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const max = Math.max(...rows.map((r) => r.stars));
 
@@ -307,6 +384,10 @@ function Radar() {
 
 const LID = {
   forgeTitle: "FORGE · PERACIK SKILL",
+  gal: "Galeri (pilih untuk diracik → Terapkan)",
+  galPh: "cari skill…",
+  galPhNo: "tak ketemu",
+  galApply: "Terapkan",
   nLabel: "Nama skill",
   dLabel: "Deskripsi (maks 60 karakter)",
   dLimit: "/60",
@@ -323,6 +404,10 @@ const LID = {
 };
 const LEN = {
   forgeTitle: "FORGE · SKILL COMPOSER",
+  gal: "Gallery (pick skills to compose → Apply)",
+  galPh: "search skills…",
+  galPhNo: "not found",
+  galApply: "Apply",
   nLabel: "Skill name",
   dLabel: "Description (max 60 chars)",
   dLimit: "/60",

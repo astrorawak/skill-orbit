@@ -2,6 +2,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { generateSkill } from "./src/forge.js";
 import { SKILLS, PATTERNS } from "./src/data.js";
+import GALLERY from "./src/gallery.js";
 
 const css = readFileSync("./src/index.css", "utf8");
 
@@ -38,6 +39,15 @@ const legendHtml = PATTERNS.map(
   (p) => `<span class="legend-item"><span class="dot" style="background:${p.c}"></span>${p.k}: <em>${p.d}</em></span>`
 ).join("");
 
+// ===== GALERI: kartu skill publik untuk "Compose dari Galeri" =====
+const demoPick = ["humanizer", "x-twitter-scraper"];
+const galRows = GALLERY.map(
+  (g) => `<button class="g-card${demoPick.includes(g.slug) ? " on" : ""}">
+    <span class="g-name">${g.slug}</span>
+    <span class="g-cat">${g.cat}</span>
+    <span class="g-desc">${esc(g.desc)}</span></button>`
+).join("");
+
 const html = `<!doctype html>
 <html lang="id"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -70,6 +80,14 @@ const html = `<!doctype html>
     <div class="out"><div class="out-head"><h3 class="pnl-title" style="color:var(--cyan)">PRATINJAU</h3>
       <div class="out-actions"><button class="ghost">SALIN</button><button class="solid">UNDUH</button></div></div>
       <pre class="md">${esc(md)}</pre></div>
+  </section>
+
+  <section class="panel" style="margin-top:26px"> <h2 class="pnl-title"><span style="color:var(--accent)">✦</span> GALERI · Compose dari skill publik <span class="muted">(16 skill nyata — VoltAgent/awesome-agent-skills)</span></h2>
+    <div class="block gal" style="margin-bottom:0">
+      <div class="gal-head"><span class="grp">Galeri (pilih untuk diracik → Terapkan)</span><span class="gal-ctl"><input class="gal-search" placeholder="cari skill…" disabled/><button class="ghost sm" style="opacity:.9">Terapkan (2)</button></span></div>
+      <div class="gal-grid" style="max-height:none;overflow:visible">${galRows}</div>
+      <p class="data-note">Contoh: {humanizer + x-twitter-scraper} → perilaku [tajam] + alat [web], deskripsi gabungan. Di versi interaktif: klik kartu → Terapkan → FORGE mengisi nama/deskripsi/prilaku/alat otomatis.</p>
+    </div>
   </section>
 
   <section class="panel" style="margin-top:26px"> <h2 class="pnl-title"><span style="color:var(--accent)">◉</span> RADAR — trending agent skills <span class="muted">(bintang live dari GitHub API di versi interaktif)</span></h2>

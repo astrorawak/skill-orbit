@@ -167,11 +167,29 @@ a{color:var(--cyan)}
 .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pp 1.6s ease-in-out infinite}
 @keyframes pp{0%,100%{opacity:.3}50%{opacity:1}}
 
+/* ===== GALERI (compose dari skill publik) ===== */
+.block.gal{border:1px solid var(--border);border-radius:10px;padding:10px;background:linear-gradient(180deg,rgba(34,197,94,.04),transparent);margin-bottom:14px}
+.gal-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.grp{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+.gal-ctl{display:flex;gap:8px;margin-left:auto;align-items:center}
+.gal-search{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--fg);padding:5px 9px;font-size:12.5px;font-family:'Fira Code',monospace;width:150px}
+.gal-search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;max-height:220px;overflow:auto;padding-right:4px}
+.g-card{display:flex;flex-direction:column;gap:3px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;transition:border-color .15s,transform .1s,box-shadow .15s}
+.g-card:hover{border-color:var(--mute);transform:translateY(-1px)}
+.g-card.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 14px rgba(34,197,94,.25)}
+.g-name{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--fg);word-break:break-word}
+.g-cat{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.g-desc{font-size:10.5px;color:var(--mute);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gal-empty{font-size:12px;padding:6px 2px}
+.ghost.sm{padding:5px 10px;font-size:11px;border-radius:8px}
+
 @media (max-width:900px){
   .forge{grid-template-columns:1fr}
   .out{position:static}
   .top{flex-wrap:wrap}
   .lang{margin-left:auto}
+  .gal-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 }
 @media (prefers-reduced-motion:reduce){
   .orb,.pulse-dot,.bar i{animation:none}
@@ -242,6 +260,62 @@ Deskripsi singkat: apa yang skill ini lakukan, apa yang tidak, dan bagaimana ia 
 
 ## Verification
 - Cara membuktikan skill benar-benar bekerja (hasil riil, bukan narasi).</pre></div>
+  </section>
+
+  <section class="panel" style="margin-top:26px"> <h2 class="pnl-title"><span style="color:var(--accent)">✦</span> GALERI · Compose dari skill publik <span class="muted">(16 skill nyata — VoltAgent/awesome-agent-skills)</span></h2>
+    <div class="block gal" style="margin-bottom:0">
+      <div class="gal-head"><span class="grp">Galeri (pilih untuk diracik → Terapkan)</span><span class="gal-ctl"><input class="gal-search" placeholder="cari skill…" disabled/><button class="ghost sm" style="opacity:.9">Terapkan (2)</button></span></div>
+      <div class="gal-grid" style="max-height:none;overflow:visible"><button class="g-card">
+    <span class="g-name">ai-marketing-claude</span>
+    <span class="g-cat">Marketing</span>
+    <span class="g-desc">17 marketing frameworks: cold outreach, homepage audit, social cards &amp; more</span></button><button class="g-card on">
+    <span class="g-name">humanizer</span>
+    <span class="g-cat">Writing</span>
+    <span class="g-desc">Make AI-written text sound more natural and human</span></button><button class="g-card">
+    <span class="g-name">unslop</span>
+    <span class="g-cat">Writing</span>
+    <span class="g-desc">Removes AI writing tells: tricolons, em-dash piles, hedging, 'delve/crucial'</span></button><button class="g-card">
+    <span class="g-name">creative-director</span>
+    <span class="g-cat">Creative</span>
+    <span class="g-desc">AI creative director: 20+ methodologies (SIT, TRIZ, SCAMPER), 3-axis eval</span></button><button class="g-card on">
+    <span class="g-name">x-twitter-scraper</span>
+    <span class="g-cat">Social</span>
+    <span class="g-desc">Tweet search, profile tweets, follower export, media, posting, replies (MCP)</span></button><button class="g-card">
+    <span class="g-name">nano-ppt</span>
+    <span class="g-cat">Productivity</span>
+    <span class="g-desc">AI-powered PPT generation with document analysis and styled images</span></button><button class="g-card">
+    <span class="g-name">frontend-slides</span>
+    <span class="g-cat">Productivity</span>
+    <span class="g-desc">Animation-rich HTML presentations with visual style previews</span></button><button class="g-card">
+    <span class="g-name">whatsapp-automate</span>
+    <span class="g-cat">Messaging</span>
+    <span class="g-desc">Build WhatsApp automations with workflows and agents</span></button><button class="g-card">
+    <span class="g-name">whatsapp-integrate</span>
+    <span class="g-cat">Messaging</span>
+    <span class="g-desc">Connect WhatsApp, set up webhooks, and send messages</span></button><button class="g-card">
+    <span class="g-name">multi-source-search</span>
+    <span class="g-cat">Research</span>
+    <span class="g-desc">Evidence-led multi-source research with offline validation</span></button><button class="g-card">
+    <span class="g-name">claude-seo</span>
+    <span class="g-cat">SEO</span>
+    <span class="g-desc">Universal SEO skill for comprehensive website analysis and optimization</span></button><button class="g-card">
+    <span class="g-name">superpowers-lab</span>
+    <span class="g-cat">Productivity</span>
+    <span class="g-desc">Lab environment for Claude superpowers</span></button><button class="g-card">
+    <span class="g-name">docx</span>
+    <span class="g-cat">Office</span>
+    <span class="g-desc">Create, edit, and analyze Word documents</span></button><button class="g-card">
+    <span class="g-name">pptx</span>
+    <span class="g-cat">Office</span>
+    <span class="g-desc">Create, edit, and analyze PowerPoint presentations</span></button><button class="g-card">
+    <span class="g-name">xlsx</span>
+    <span class="g-cat">Office</span>
+    <span class="g-desc">Create, edit, and analyze Excel spreadsheets</span></button><button class="g-card">
+    <span class="g-name">pdf</span>
+    <span class="g-cat">Office</span>
+    <span class="g-desc">Extract text, create PDFs, and handle forms</span></button></div>
+      <p class="data-note">Contoh: {humanizer + x-twitter-scraper} → perilaku [tajam] + alat [web], deskripsi gabungan. Di versi interaktif: klik kartu → Terapkan → FORGE mengisi nama/deskripsi/prilaku/alat otomatis.</p>
+    </div>
   </section>
 
   <section class="panel" style="margin-top:26px"> <h2 class="pnl-title"><span style="color:var(--accent)">◉</span> RADAR — trending agent skills <span class="muted">(bintang live dari GitHub API di versi interaktif)</span></h2>
