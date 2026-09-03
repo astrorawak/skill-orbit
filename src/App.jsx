@@ -37,7 +37,7 @@ const ICONS = {
 };
 
 export default function App() {
-  const [tab, setTab] = useState("forge");
+  const [tab, setTab] = useState("home");
   const [lang, setLang] = useState("id");
   const [draft, setDraft] = useState(null);
 
@@ -51,9 +51,11 @@ export default function App() {
       <div className="bg-grid" aria-hidden="true" />
       <div className="orb o1" aria-hidden="true" />
       <div className="orb o2" aria-hidden="true" />
-      <Header tab={tab} setTab={setTab} lang={lang} setLang={setLang} />
+      <Header tab={tab} setTab={setTab} lang={lang} setLang={setLang} onHome={() => setTab("home")} />
       <main className="stage">
-        {tab === "forge" ? (
+        {tab === "home" ? (
+          <Home lang={lang} onGo={setTab} />
+        ) : tab === "forge" ? (
           <Forge lang={lang} draft={draft} setDraft={setDraft} />
         ) : tab === "radar" ? (
           <Radar lang={lang} />
@@ -63,22 +65,82 @@ export default function App() {
       </main>
       <footer className="foot">
         <span>SKILL//ORBIT — {lang === "id" ? "pendahulu untuk gelombang skills. angka dari GitHub API." : "precursor to the skills wave. numbers from GitHub API."}</span>
-        <span className="pulse-dot" /> <span>{lang === "id" ? "live" : "live"}</span>
+        <span className="pulse-dot" /> <span>live</span>
       </footer>
     </div>
   );
 }
 
-function Header({ tab, setTab, lang, setLang }) {
+// ===== Landing: kartu-kartu besar, bisa diklik =====
+function Home({ lang, onGo }) {
+  const stashCount = useMemo(() => stashList().length, []);
+  const L = lang === "id" ? LID : LEN;
+  const cards = [
+    {
+      key: "forge",
+      icon: ICONS.gear,
+      apex: "F",
+      title: L.homeForgeT,
+      desc: L.homeForgeD,
+      btn: L.homeForgeB,
+      badge: null,
+    },
+    {
+      key: "radar",
+      icon: ICONS.radar,
+      apex: "R",
+      title: L.homeRadarT,
+      desc: L.homeRadarD,
+      btn: L.homeRadarB,
+      badge: `${PATTERNS.length} ${lang === "id" ? "pola" : "patterns"}`,
+    },
+    {
+      key: "arsip",
+      icon: ICONS.box,
+      apex: "A",
+      title: L.homeArsipT,
+      desc: L.homeArsipD,
+      btn: L.homeArsipB,
+      badge: stashCount > 0 ? `${stashCount} skill` : null,
+    },
+  ];
+  return (
+    <section className="home">
+      <div className="home-hero">
+        <h1 className="home-kicker">{lang === "id" ? "GELEMBANG SKILL · PENDULU" : "SKILLS WAVE · PRECURSOR"}</h1>
+        <p className="home-note">{L.homeNote}</p>
+      </div>
+      <div className="card-grid">
+        {cards.map((c) => (
+          <button key={c.key} className="h-card" onClick={() => onGo(c.key)} aria-label={c.title}>
+            <span className="h-apex" aria-hidden="true">{c.apex}</span>
+            <span className="h-icon"><Icon d={c.icon} size={34} /></span>
+            <span className="h-body">
+              <span className="h-title">{c.title}</span>
+              <span className="h-desc">{c.desc}</span>
+            </span>
+            {c.badge && <span className="h-badge">{c.badge}</span>}
+            <span className="h-go" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Header({ tab, setTab, lang, setLang, onHome }) {
   return (
     <header className="top">
-      <div className="brand">
+      <button className="brand" onClick={onHome} aria-label="Beranda">
         <span className="brand-star">✦</span>
         <span className="brand-name">SKILL<span className="accent">//</span>ORBIT</span>
-      </div>
+      </button>
       <nav className="tabs">
+        <button className={tab === "home" ? "tab on" : "tab"} onClick={() => setTab("home")}>
+          {lang === "id" ? "HOME" : "HOME"}
+        </button>
         <button className={tab === "forge" ? "tab on" : "tab"} onClick={() => setTab("forge")}>
-          <Icon d={ICONS.gear} /> {lang === "id" ? "FORGE" : "FORGE"}
+          <Icon d={ICONS.gear} /> FORGE
         </button>
         <button className={tab === "radar" ? "tab on" : "tab"} onClick={() => setTab("radar")}>
           {lang === "id" ? "RADAR · Tren" : "RADAR"}
@@ -197,6 +259,7 @@ function Forge({ lang, draft = null, setDraft }) {
   async function loadFromRepo(repo, branch) {
     setGhLoading(true);
     setGhErr("");
+    setGhInfo("");
     const bases = [
       "SKILL.md",
       "skills/SKILL.md",
@@ -214,7 +277,7 @@ function Forge({ lang, draft = null, setDraft }) {
         const text = await r.text();
         if (!text.trim()) continue;
         const p = parseSkillFile(text);
-        setName(p.name || p.name || repo.split("/").pop());
+        setName(p.name || repo.split("/").pop());
         setDesc(p.desc || "");
         if (p.author) setAuthor(p.author);
         if (p.tags) setTags(p.tags);
@@ -230,9 +293,39 @@ function Forge({ lang, draft = null, setDraft }) {
         /* coba basis berikutnya */
       }
     }
-    setGhErr(L.errNoSkill(repo));
-    return false;
+    // Repo tak punya SKILL.md → coba README sebagai draf (tidak buntu).
+    try {
+      const rd = await fetch(`https://raw.githubusercontent.com/${repo}/${branch}/README.md`);
+      if (rd.ok) {
+        const text = (await rd.text()).trim();
+        if (text) {
+          const p = parseSkillFile(text);
+          const name = p.name || repo.split("/").pop().replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+          const first = p.desc || (text.replace(/[#>*_`]/g, "").split(/\n\s*\n/)[0] || "").trim();
+          setName(name);
+          setDesc((first || L.ghNoSkillDraft(repo)).slice(0, 60));
+          if (p.author) setAuthor(p.author);
+          setSrc(`https://github.com/${repo}`);
+          setTab("forge");
+          setDraft(null);
+          setLoadedFrom(`${repo} · README`);
+          setGhInfo(L.ghNoSkillInfo);
+          return true;
+        }
+      }
+    } catch { /* lanjut: draf dari nama */ }
+    // Paling buruk: draf dari nama repo — user tetap sampai di editor, bukan error.
+    setName(repo.split("/").pop().replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
+    setDesc(L.ghNoSkillDraft(repo));
+    setAuthor(repo.split("/")[0]);
+    setSrc(`https://github.com/${repo}`);
+    setTab("forge");
+    setDraft(null);
+    setLoadedFrom(repo);
+    setGhInfo(L.ghNoSkillInfo);
+    return true;
   }
+  const [ghInfo, setGhInfo] = useState("");
   const [loadedFrom, setLoadedFrom] = useState("");
   function applyGallery() {
     if (!gal.length) return;
@@ -347,6 +440,7 @@ function Forge({ lang, draft = null, setDraft }) {
             </span>
           </div>
           {ghErr && <div className="g-err">{ghErr}</div>}
+          {ghInfo && <div className="g-info">{ghInfo}</div>}
           {ghDone && !ghErr && ghRes.length === 0 && (
             <div className="muted gal-empty">— {L.ghNone} —</div>
           )}
@@ -444,6 +538,7 @@ function Forge({ lang, draft = null, setDraft }) {
             </button>
           </div>
         </div>
+        <div className="md-cap">{L.previewCap}</div>
         <pre className="md">{markdown}</pre>
       </section>
     </div>
@@ -773,6 +868,16 @@ function Radar() {
 
 const LID = {
   forgeTitle: "FORGE · PERACIK SKILL",
+  homeNote: "Simpan, rakit, dan bawa koleksi skillmu ke mana saja.",
+  homeForgeT: "Forge — Racik skill",
+  homeForgeD: "Buat skill baru: dari galeri, dari repo GitHub, atau dari nol.",
+  homeForgeB: "Buka Forge →",
+  homeRadarT: "Radar — tren skill",
+  homeRadarD: "Lihat skill yang lagi naik di GitHub. Bintang asli, bukan dikarang.",
+  homeRadarB: "Buka Radar →",
+  homeArsipT: "Arsip — koleksi & cloud",
+  homeArsipD: "Simpan skillmu, masuk akun online, ambil di semua perangkat.",
+  homeArsipB: "Buka Arsip →",
   gal: "Galeri (pilih untuk diracik → Terapkan)",
   galPh: "cari skill…",
   galPhNo: "tak ketemu",
@@ -788,6 +893,7 @@ const LID = {
   tools: "Alat (yang boleh dipakai)",
   niche: "Tajamkan: tambahkan blok 'jangan dipakai untuk hal di luar lingkup'",
   preview: "PRATINJAU",
+  previewCap: "File SKILL.md (mentah) — hasil racikan yang akan kamu simpan.",
   copy: "SALIN",
   dl: "UNDUH",
   saveStash: "SIMPAN",
@@ -803,6 +909,8 @@ const LID = {
   errLimit: "⛔ Jatah API GitHub sementara habis. Tunggu sebentar, lalu coba lagi.",
   errSearch: "⚠️ Pencarian gagal: ",
   errNoSkill: (r) => `⚠️ Tak ada SKILL.md ditemukan di ${r}.`,
+  ghNoSkillInfo: "Reponya tak punya file SKILL.md, jadi saya buat draf darinya (dari README atau nama repo) — silakan rapikan di Forge sebelum disimpan.",
+  ghNoSkillDraft: (r) => `Draf skill dari repo ${r}.`,
   arsipTitle: "ARSIP — koleksi skill racikanmu",
   arsipSub: "Semua yang kamu simpan dari FORGE, ada di sini.",
   arsipLocalNote: "Tersimpan di perangkatmu (localStorage). Masuk akun online di atas untuk simpan & ambil skill di semua perangkat.",
@@ -857,6 +965,16 @@ const LID = {
 };
 const LEN = {
   forgeTitle: "FORGE · SKILL COMPOSER",
+  homeNote: "Stash, compose, and carry your skills anywhere.",
+  homeForgeT: "Forge — Compose a skill",
+  homeForgeD: "Build a new skill: from the gallery, a GitHub repo, or from scratch.",
+  homeForgeB: "Open Forge →",
+  homeRadarT: "Radar — trending skills",
+  homeRadarD: "See skills getting popular on GitHub. Real stars, not invented.",
+  homeRadarB: "Open Radar →",
+  homeArsipT: "Stash — collection & cloud",
+  homeArsipD: "Save your skills, sign in online, and pick them up on any device.",
+  homeArsipB: "Open Stash →",
   gal: "Gallery (pick skills to compose → Apply)",
   galPh: "search skills…",
   galPhNo: "not found",
@@ -872,6 +990,7 @@ const LEN = {
   tools: "Tools (allowed set)",
   niche: "Sharpen: add 'don't use for' scope block",
   preview: "PREVIEW",
+  previewCap: "SKILL.md file (raw) — the recipe you'll save.",
   copy: "COPY",
   dl: "DOWNLOAD",
   saveStash: "SAVE",
@@ -887,6 +1006,8 @@ const LEN = {
   errLimit: "⛔ GitHub API rate-limit reached. Wait a bit and retry.",
   errSearch: "⚠️ Search failed: ",
   errNoSkill: (r) => `⚠️ No SKILL.md found in ${r}.`,
+  ghNoSkillInfo: "This repo has no SKILL.md, so I made a draft from it (its README or name) — polish it in Forge before saving.",
+  ghNoSkillDraft: (r) => `Draft skill from repo ${r}.`,
   arsipTitle: "STASH — your composed skills",
   arsipSub: "Every skill you save from FORGE lives here.",
   arsipLocalNote: "Stored on this device (localStorage). Sign in above to save & fetch your skills across devices.",
