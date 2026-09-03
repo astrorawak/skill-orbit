@@ -386,8 +386,8 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         setName(p.name || repo.split("/").pop());
         setDesc(p.desc || "");
         if (p.author) setAuthor(p.author);
-        if (p.tags) setTags(p.tags);
-        setRelated(p.related);
+        setTags(p.tags || "");
+        setRelated(p.related || "");
         setSrc(`https://github.com/${repo}`);
         setGhErr("");
         setGhDone(false);
@@ -411,6 +411,8 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           setName(name);
           setDesc((first || L.ghNoSkillDraft(repo)).slice(0, 60));
           if (p.author) setAuthor(p.author);
+          setTags("");
+          setRelated("");
           setSrc(`https://github.com/${repo}`);
           setTab("forge");
           setDraft(null);
@@ -502,6 +504,11 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           <Icon d={ICONS.gear} /> {L.forgeTitle}
           <button className="help-chip" onClick={() => onHelp("forge")} title={L.helpBtnT}><Icon d={ICONS.help} size={15} />{L.helpBtn}</button>
         </h2>
+        {loadedFrom && (
+          <div className="draft-note">
+            <b>⟡ {L.draftTag}</b> {L.draftHint} <span className="muted">({loadedFrom})</span>
+          </div>
+        )}
         <div className="block gal">
           <div className="gal-head">
             <span className="grp">{L.gal}</span>
@@ -1004,6 +1011,8 @@ const LID = {
   helpBtnT: "Panduan halaman ini",
   helpTag: "Panduan",
   helpClose: "Mengerti",
+  draftTag: "MERACIK DI SINI",
+  draftHint: "Draf sudah dimuat. Ubah kolom-kolom di panel kiri ini (nama, deskripsi, tag, isi) — pratinjau di kanan menyesuaikan otomatis.",
   helpFull: "Buka panduan lengkap (tab baru) ↗",
   helpPersist: "Tombol Panduan (?) selalu ada di pojok header tiap halaman — buka kapan pun.",
   HELP_T: { home: "Beranda", forge: "FORGE · racik skill", radar: "RADAR · tren", arsip: "ARSIP & akun" },
@@ -1144,6 +1153,8 @@ const LEN = {
   helpBtnT: "This page's guide",
   helpTag: "Guide",
   helpClose: "Got it",
+  draftTag: "COMPOSE HERE",
+  draftHint: "Draft loaded. Edit the fields in this left panel (name, description, tags, body) — the preview on the right updates automatically.",
   helpFull: "Open the full guide (new tab) ↗",
   helpPersist: "The Guide (?) button stays in the corner of each page's header — open it anytime.",
   HELP_T: { home: "Home", forge: "FORGE · compose", radar: "RADAR · trends", arsip: "ARSIP & account" },
