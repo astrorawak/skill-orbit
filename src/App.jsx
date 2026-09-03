@@ -3,6 +3,7 @@ import { SKILLS, PATTERNS } from "./data";
 import { BEHAVIORS, TOOL_OPTS, generateSkill, validateDesc } from "./forge";
 import GALLERY from "./gallery";
 import { stashList, stashAdd, stashDel, stashExport, stashImport, parseSkillFile } from "./stash";
+import { getToken, getEmail, setSession, clearSession, register, login, syncUp, syncDown } from "./cloud";
 
 // mapping kategori galeri -> perilaku + alat (dipakai "Compose dari Galeri")
 function galMap(slug) {
@@ -455,6 +456,47 @@ function Arsip({ lang, onOpen }) {
   const L = lang === "id" ? LID : LEN;
   const [msg, setMsg] = useState("");
 
+  // ---- akun online (cloud) ----
+  const [email, setEmail] = useState(getEmail());
+  const [pw, setPw] = useState("");
+  const [logged, setLogged] = useState(!!getToken());
+  const [cldMsg, setCldMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  function flash(m) { setCldMsg(m); setTimeout(() => setCldMsg(""), 2600); }
+  async function doRegister(ev) {
+    ev.preventDefault();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return flash(L.cldMailBad);
+    if (pw.length < 6) return flash(L.cldPwShort);
+    setBusy(true);
+    try { await register(email.trim().toLowerCase(), pw); setLogged(true); flash(L.cldRegOk); }
+    catch (e) { flash(L.cldFail + " " + e.message); }
+    setBusy(false);
+  }
+  async function doLogin(ev) {
+    ev.preventDefault();
+    if (!email || !pw) return;
+    setBusy(true);
+    try { await login(email.trim().toLowerCase(), pw); setLogged(true); flash(L.cldLoginOk); }
+    catch (e) { flash(L.cldFail + " " + e.message); }
+    setBusy(false);
+  }
+  function doLogout() { clearSession(); setLogged(false); setPw(""); flash(L.cldLogout); }
+  async function doPush() {
+    setBusy(true);
+    try { const r = await syncUp(items); flash(`${L.cldPushed} ${r.added} · ${L.cldSkipped} ${r.skipped}`); }
+    catch (e) { flash(L.cldNeedAuth + " " + e.message); }
+    setBusy(false);
+  }
+  async function doPull() {
+    setBusy(true);
+    try {
+      const r = await syncDown(stashImport);
+      reload();
+      flash(`${L.cldPulled} ${r.down} · ${L.cldAdded} ${r.added}`);
+    } catch (e) { flash(L.cldNeedAuth + " " + e.message); }
+    setBusy(false);
+  }
+
   function reload() {
     setItems(stashList());
   }
@@ -501,6 +543,31 @@ function Arsip({ lang, onOpen }) {
       </h2>
       <p className="muted">{L.arsipSub}</p>
       <p className="local-note">⚠️ {L.arsipLocalNote}</p>
+      <div className="cloud-panel">
+        {!logged ? (
+          <form className="cloud-form" onSubmit={doLogin}>
+            <span className="cloud-h">☁️ {L.cldTitle}</span>
+            <input className="inp" type="email" placeholder={L.cldMailPh} value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+            <input className="inp" type="password" placeholder={L.cldPwPh} value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="current-password" />
+            <div className="cloud-row">
+              <button className="ghost sm" type="submit" disabled={busy}>{busy ? "…" : L.cldLogin}</button>
+              <button className="ghost sm accent" type="button" disabled={busy} onClick={doRegister}>{busy ? "…" : L.cldReg}</button>
+            </div>
+            <p className="muted cld-hint">{L.cldHint}</p>
+          </form>
+        ) : (
+          <div className="cloud-signed">
+            <span className="cloud-h">☁️ {L.cldInAs} <b>{getEmail()}</b></span>
+            <div className="cloud-row">
+              <button className="ghost sm" disabled={busy} onClick={doPush}>{busy ? "…" : L.cldPush}</button>
+              <button className="ghost sm" disabled={busy} onClick={doPull}>{busy ? "…" : L.cldPull}</button>
+              <button className="ghost sm danger" onClick={doLogout}>{L.cldLogout}</button>
+            </div>
+            <p className="muted cld-hint">{L.cldSignedHint}</p>
+          </div>
+        )}
+        {cldMsg && <p className="loaded-note">{cldMsg}</p>}
+      </div>
       <div className="arsip-actions">
         <button className="ghost sm" onClick={doExport}>
           {L.arsipExport}
@@ -683,7 +750,7 @@ const LID = {
   errNoSkill: (r) => `⚠️ Tak ada SKILL.md ditemukan di ${r}.`,
   arsipTitle: "ARSIP — koleksi skill racikanmu",
   arsipSub: "Semua yang kamu simpan dari FORGE, ada di sini.",
-  arsipLocalNote: "Disimpan di perangkat/browser ini (localStorage) — belum akun online. Format JSON siap nyambung ke akun publik (butuh backend).",
+  arsipLocalNote: "Tersimpan di perangkatmu (localStorage). Masuk akun online di atas untuk simpan & ambil skill di semua perangkat.",
   arsipEmpty: "belum ada. Racik di FORGE lalu klik SIMPAN.",
   arsipRacik: "Racik lagi →",
   arsipCopy: "Salin",
@@ -694,6 +761,28 @@ const LID = {
   arsipCopied: "Disalin: ",
   arsipImported: "Diimpor: ",
   importerr: "File JSON tidak valid.",
+  cldTitle: "Akun online",
+  cldMailPh: "email",
+  cldPwPh: "kata sandi (min. 6)",
+  cldLogin: "Masuk",
+  cldReg: "Daftar akun baru",
+  cldHint: "Bikin akun untuk menyimpan skill racikanmu ke cloud dan mengambinya lagi dari perangkat lain.",
+  cldInAs: "Masuk sebagai",
+  cldPush: "▲ Simpan ke cloud",
+  cldPull: "▼ Ambil dari cloud",
+  cldLogout: "Keluar",
+  cldSignedHint: "Skill yang sudah tersimpan ditandai; tanggal sinkron memakai waktu server.",
+  cldMailBad: "Email tak valid.",
+  cldPwShort: "Kata sandi minimal 6 karakter.",
+  cldRegOk: "Akun dibuat ✓",
+  cldLoginOk: "Berhasil masuk ✓",
+  cldLogoutMsg: "Keluar dari akun.",
+  cldFail: "Gagal:",
+  cldNeedAuth: "Perlu masuk akun dulu.",
+  cldPushed: "Tersimpan ke cloud:",
+  cldPulled: "Diambil dari cloud:",
+  cldSkipped: "sudah ada,",
+  cldAdded: "ditambah",
 };
 const LEN = {
   forgeTitle: "FORGE · SKILL COMPOSER",
@@ -729,7 +818,7 @@ const LEN = {
   errNoSkill: (r) => `⚠️ No SKILL.md found in ${r}.`,
   arsipTitle: "STASH — your composed skills",
   arsipSub: "Every skill you save from FORGE lives here.",
-  arsipLocalNote: "Stored on this device/browser (localStorage) — no online account yet. JSON format is ready to wire to a public account (needs a backend).",
+  arsipLocalNote: "Stored on this device (localStorage). Sign in above to save & fetch your skills across devices.",
   arsipEmpty: "empty. Compose in FORGE and hit SAVE.",
   arsipRacik: "Re-compose →",
   arsipCopy: "Copy",
@@ -740,6 +829,28 @@ const LEN = {
   arsipCopied: "Copied: ",
   arsipImported: "Imported: ",
   importerr: "Invalid JSON file.",
+  cldTitle: "Online account",
+  cldMailPh: "email",
+  cldPwPh: "password (min. 6)",
+  cldLogin: "Sign in",
+  cldReg: "Create account",
+  cldHint: "Create an account to save your composed skills to the cloud and fetch them from any device.",
+  cldInAs: "Signed in as",
+  cldPush: "▲ Save to cloud",
+  cldPull: "▼ Fetch from cloud",
+  cldLogout: "Sign out",
+  cldSignedHint: "Already-saved skills are skipped; sync uses server timestamps.",
+  cldMailBad: "Invalid email.",
+  cldPwShort: "Password needs at least 6 characters.",
+  cldRegOk: "Account created ✓",
+  cldLoginOk: "Signed in ✓",
+  cldLogoutMsg: "Signed out.",
+  cldFail: "Failed:",
+  cldNeedAuth: "Please sign in first.",
+  cldPushed: "Saved to cloud:",
+  cldPulled: "Fetched from cloud:",
+  cldSkipped: "already there,",
+  cldAdded: "added",
 };
 const qPh = "cari nama / repo…";
 const qPhEmpty = "cari nama / repo…";
