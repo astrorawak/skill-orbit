@@ -327,6 +327,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
   const [ghErr, setGhErr] = useState("");
   const [ghDone, setGhDone] = useState(false);
   const [sel, setSel] = useState(null);
+  const [prev, setPrev] = useState({ repo: "", loading: false, kind: "", text: "" });
   async function ghSearch() {
     if (!ghQ.trim()) return;
     setGhLoading(true);
@@ -388,6 +389,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         const p = parseSkillFile(text);
         setName(p.name || repo.split("/").pop());
         setDesc(p.desc || "");
+        setSummary(p.summary || "");           // ⭐ isi asli SKILL.md repo
         if (p.author) setAuthor(p.author);
         setTags(p.tags || "");
         setRelated(p.related || "");
@@ -413,6 +415,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           const first = p.desc || realDesc || (text.replace(/[#>*_`]/g, "").split(/\n\s*\n/)[0] || "").trim();
           setName(name);
           setDesc((first || L.ghNoSkillDraft(repo)).slice(0, 60));
+          setSummary(p.summary || realDesc || ""); // ⭐ isi asli README repo
           if (p.author) setAuthor(p.author);
           setTags("");
           setRelated("");
@@ -446,6 +449,43 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
+  // Saat sebuah repo dipilih di Telusur → tampilkan ISI skill-nya dulu (SKILL.md / README).
+  useEffect(() => {
+    if (!sel) return;
+    let go = true;
+    setPrev({ repo: sel.full_name, loading: true, kind: "", text: "" });
+    const branch = sel.default_branch || "main";
+    const bases = ["SKILL.md", "skills/SKILL.md", "Skills/SKILL.md", "skill.md", "skills/skill.md", "docs/SKILL.md", "SKILL.md.an.md"];
+    (async () => {
+      for (const b of bases) {
+        try {
+          const r = await fetch(`https://raw.githubusercontent.com/${sel.full_name}/${branch}/${b}`);
+          if (!r.ok) continue;
+          const text = (await r.text()).trim();
+          if (!text) continue;
+          if (go)
+            setPrev({
+              repo: sel.full_name, loading: false, kind: b,
+              text: text.replace(/^---[\s\S]*?---\s*/, "").replace(/[#>*_`]/g, "").slice(0, 340).trim(),
+            });
+          return;
+        } catch { /* coba basis berikutnya */ }
+      }
+      try {
+        const rd = await fetch(`https://raw.githubusercontent.com/${sel.full_name}/${branch}/README.md`);
+        if (rd.ok) {
+          const text = (await rd.text()).trim();
+          if (go)
+            setPrev({
+              repo: sel.full_name, loading: false, kind: "README",
+              text: text.replace(/[#>*_`]/g, "").replace(/\s+/g, " ").slice(0, 340).trim(),
+            });
+        }
+      } catch { /* tanpa dokumen */ }
+      if (go) setPrev({ repo: sel.full_name, loading: false, kind: "", text: "" });
+    })();
+    return () => { go = false; };
+  }, [sel]);
   function applyGallery() {
     if (!gal.length) return;
     const picked = GALLERY.filter((g) => gal.includes(g.slug));
@@ -644,6 +684,26 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
                   {sel.topics.map((t) => <span key={t}>{t}</span>)}
                 </div>
               )}
+              <div className="gh-prev">
+                <span className="grp">{L.ghPrevTitle}</span>
+                {prev.repo === sel.full_name && prev.loading && (
+                  <p className="gh-prev-load">{L.ghPrevLoading}</p>
+                )}
+                {prev.repo === sel.full_name && !prev.loading && prev.text && (
+                  <>
+                    <p className="gh-prev-text">{prev.text}</p>
+                    {prev.kind !== "README" && prev.kind !== "" && (
+                      <span className="gh-prev-k">↳ {prev.kind}</span>
+                    )}
+                    {prev.kind === "README" && (
+                      <p className="gh-prev-none">{L.ghNoSkillInfo}</p>
+                    )}
+                  </>
+                )}
+                {prev.repo === sel.full_name && !prev.loading && !prev.text && (
+                  <p className="gh-prev-none">{L.ghNoSkillInfo}</p>
+                )}
+              </div>
               <p className="gh-panel-hint">{L.ghSelHint}</p>
               <div className="gh-panel-act">
                 <button className="ph" disabled={ghLoading} onClick={() => loadFromRepo(sel.full_name, sel.default_branch || "main", sel.description)}>
@@ -1167,6 +1227,8 @@ const LID = {
   ghSelMeta: "update ",
   ghSelCancel: "Batal ✕",
   ghSelUnsel: "klik untuk batal",
+  ghPrevTitle: "ISI SKILL-NYA (dari repo)",
+  ghPrevLoading: "Memuat isi repo…",
   errLimit: "⛔ Jatah API GitHub sementara habis. Tunggu sebentar, lalu coba lagi.",
   errSearch: "⚠️ Pencarian gagal: ",
   errNoSkill: (r) => `⚠️ Tak ada SKILL.md ditemukan di ${r}.`,
@@ -1335,6 +1397,8 @@ const LEN = {
   ghSelMeta: "updated ",
   ghSelCancel: "Cancel ✕",
   ghSelUnsel: "click to cancel",
+  ghPrevTitle: "THE SKILL'S CONTENT (from repo)",
+  ghPrevLoading: "Loading repo content…",
   errLimit: "⛔ GitHub API rate-limit reached. Wait a bit and retry.",
   errSearch: "⚠️ Search failed: ",
   errNoSkill: (r) => `⚠️ No SKILL.md found in ${r}.`,
