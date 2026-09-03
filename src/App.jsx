@@ -325,6 +325,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
   const [ghLoading, setGhLoading] = useState(false);
   const [ghErr, setGhErr] = useState("");
   const [ghDone, setGhDone] = useState(false);
+  const [sel, setSel] = useState(null);
   async function ghSearch() {
     if (!ghQ.trim()) return;
     setGhLoading(true);
@@ -362,7 +363,8 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
       setGhDone(true);
     }
   }
-  async function loadFromRepo(repo, branch) {
+  async function loadFromRepo(repo, branch, realDesc = "") {
+    setSel(null);
     setGhLoading(true);
     setGhErr("");
     setGhInfo("");
@@ -407,7 +409,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         if (text) {
           const p = parseSkillFile(text);
           const name = p.name || repo.split("/").pop().replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-          const first = p.desc || (text.replace(/[#>*_`]/g, "").split(/\n\s*\n/)[0] || "").trim();
+          const first = p.desc || realDesc || (text.replace(/[#>*_`]/g, "").split(/\n\s*\n/)[0] || "").trim();
           setName(name);
           setDesc((first || L.ghNoSkillDraft(repo)).slice(0, 60));
           if (p.author) setAuthor(p.author);
@@ -424,7 +426,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     } catch { /* lanjut: draf dari nama */ }
     // Paling buruk: draf dari nama repo — user tetap sampai di editor, bukan error.
     setName(repo.split("/").pop().replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
-    setDesc(L.ghNoSkillDraft(repo));
+    setDesc((realDesc || L.ghNoSkillDraft(repo)).slice(0, 60));
     setAuthor(repo.split("/")[0]);
     setSrc(`https://github.com/${repo}`);
     setTab("forge");
@@ -474,6 +476,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
 
   const L = lang === "id" ? LID : LEN;
   useEffect(() => {
+    if (loadedFrom || draft) return; // jangan timpa deskripsi asli repo / draf dari ARSIP
     if (lang === "id") setDesc("Rekap keuangan dan untung-rugi usaha ternak otomatis.");
     else setDesc("Auto bookkeeping & P&L for a livestock venture.");
   }, [lang]);
@@ -560,27 +563,60 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           )}
           {ghRes.length > 0 && (
             <div className="gh-grid">
-              {ghRes.map((r) => (
-                <div className="g-card gh-row" key={r.id}>
-                  <div className="gh-name">
-                    {r.full_name}
-                    <span className="gh-stars">★ {Math.round(r.stargazers_count / 100) / 10}k</span>
+              {ghRes.map((r) => {
+                const selId = sel && sel.full_name === r.full_name;
+                return (
+                  <div
+                    className={selId ? "g-card gh-row sel" : "g-card gh-row"}
+                    key={r.id}
+                    onClick={() => setSel(selId ? null : r)}
+                  >
+                    <div className="gh-name">
+                      {r.full_name}
+                      <span className="gh-stars">★ {Math.round(r.stargazers_count / 100) / 10}k</span>
+                    </div>
+                    <div className="gh-desc">
+                      {r.description || L.ghNoDesc}
+                      {selId && <span className="gh-sel-tag">{L.ghSelTag} · {L.ghSelUnsel}</span>}
+                    </div>
+                    <div className="gh-actions">
+                      <button className="ghost sm" onClick={(e) => { e.stopPropagation(); setSel(selId ? null : r); }}>
+                        {selId ? L.ghSelTag : L.ghPick}
+                      </button>
+                      <a className="g-link" href={r.html_url} target="_blank" rel="noreferrer">
+                        github ↗
+                      </a>
+                    </div>
                   </div>
-                  <div className="gh-desc">{r.description || L.ghNoDesc}</div>
-                  <div className="gh-actions">
-                    <button
-                      className="ghost sm"
-                      onClick={() => loadFromRepo(r.full_name, r.default_branch || "main")}
-                      disabled={ghLoading}
-                    >
-                      {ghLoading ? L.ghLoading : L.ghRacik}
-                    </button>
-                    <a className="g-link" href={r.html_url} target="_blank" rel="noreferrer">
-                      github ↗
-                    </a>
-                  </div>
+                );
+              })}
+            </div>
+          )}
+          {sel && (
+            <div className="gh-panel">
+              <div className="gh-panel-head">
+                <span className="grp">{L.ghSelTitle}</span>
+                <button className="ghost sm" onClick={() => setSel(null)}>{L.ghSelCancel}</button>
+              </div>
+              <div className="gh-panel-name">{sel.full_name}</div>
+              <div className="gh-panel-desc">{sel.description || L.ghNoDesc}</div>
+              <div className="gh-panel-meta">
+                <span>★ {Math.round(sel.stargazers_count / 100) / 10}k</span>
+                {sel.language && <span>{sel.language}</span>}
+                <span>{L.ghSelMeta}{sel.updated_at ? sel.updated_at.slice(0, 10) : ""}</span>
+              </div>
+              {sel.topics && sel.topics.length > 0 && (
+                <div className="gh-panel-topics">
+                  {sel.topics.map((t) => <span key={t}>{t}</span>)}
                 </div>
-              ))}
+              )}
+              <p className="gh-panel-hint">{L.ghSelHint}</p>
+              <div className="gh-panel-act">
+                <button className="ph" disabled={ghLoading} onClick={() => loadFromRepo(sel.full_name, sel.default_branch || "main", sel.description)}>
+                  {ghLoading ? L.ghLoading : L.ghRacik}
+                </button>
+                <a className="g-link" href={sel.html_url} target="_blank" rel="noreferrer">github ↗</a>
+              </div>
             </div>
           )}
         </div>
@@ -1068,6 +1104,14 @@ const LID = {
   ghNone: "tak ditemukan. coba kata kunci lain.",
   ghNoDesc: "tanpa deskripsi",
   ghRacik: "→ Racik & edit",
+  ghPick: "Pilih ▸",
+  ghSelTag: "✓ Dipilih",
+  ghSelTitle: "DESKRIPSI ASLI REPOSITORY",
+  ghSelHint:
+    "Ini deskripsi yang DITULIS pemilik code di GitHub — bukan template kami. Kalau pas, tekan Racik: draf-nya otomatis memakai kata-kata ini.",
+  ghSelMeta: "update ",
+  ghSelCancel: "Batal ✕",
+  ghSelUnsel: "klik untuk batal",
   errLimit: "⛔ Jatah API GitHub sementara habis. Tunggu sebentar, lalu coba lagi.",
   errSearch: "⚠️ Pencarian gagal: ",
   errNoSkill: (r) => `⚠️ Tak ada SKILL.md ditemukan di ${r}.`,
@@ -1210,6 +1254,14 @@ const LEN = {
   ghNone: "nothing found. try another term.",
   ghNoDesc: "no description",
   ghRacik: "→ Compose",
+  ghPick: "Pick ▸",
+  ghSelTag: "✓ Picked",
+  ghSelTitle: "REAL REPO DESCRIPTION",
+  ghSelHint:
+    "This is the description WRITTEN by the repo owner on GitHub — not our template. If it fits, press Compose: the draft uses these exact words.",
+  ghSelMeta: "updated ",
+  ghSelCancel: "Cancel ✕",
+  ghSelUnsel: "click to cancel",
   errLimit: "⛔ GitHub API rate-limit reached. Wait a bit and retry.",
   errSearch: "⚠️ Search failed: ",
   errNoSkill: (r) => `⚠️ No SKILL.md found in ${r}.`,
