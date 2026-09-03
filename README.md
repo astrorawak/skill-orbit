@@ -32,8 +32,13 @@ build-preview.mjs  # membuat pratinjau statis preview.html
 preview.html       # hasil render statis (FORGE + RADAR)
 ```
 
+## Live & Deploy
+- **Live demo:** https://astrorawak.github.io/skill-orbit/ (GitHub Pages, branch `gh-pages`).
+- Deploy ulang: `bash scripts/deploy-ghpages.sh` (build → branch `gh-pages`; aman, repo sementara di /tmp).
+
 ## Roadmap yang masuk akal (kalau dilewati)
-- Repo GitHub publik + live-demo (Vercel/Netlify).
+- ~~Repo GitHub publik + live-demo~~ → **DONE** di atas.
+- Live-demo Vercel/Netlify (alternatif).
 - "Compose dari galeri": ambil beberapa skill publik → padukan di sini.
 - Ngejar harga (Registri Skill) dengan filter pola virality & peringkat kecepatan.
 - Mode dwibahasa ID/EN → pasar Asia Tenggara + global.
