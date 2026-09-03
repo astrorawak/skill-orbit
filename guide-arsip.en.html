@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Complete Guide — ARSIP · Collection &amp; Account</title>
+<meta name="description" content="Complete guide to using ARSIP: manage your skill collection, an optional online account, cross-device backup &amp; sync, password reset, FAQ &amp; glossary." />
+<style>
+:root{--bg:#05080f;--panel:#0a1120;--line:#1c3350;--em:#22C55E;--cy:#22d3ee;--txt:#e6edf7;--muted:#8ea3bd;--mono:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(34,197,94,.10),transparent 60%),
+  radial-gradient(900px 500px at 0% 110%,rgba(34,211,238,.07),transparent 55%),
+  var(--bg);color:var(--txt);line-height:1.75;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:-1;background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);opacity:.5}
+.wrap{max-width:920px;margin:0 auto;padding:26px 18px 110px}
+a{color:var(--cy);text-decoration:none}
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);letter-spacing:.5px;font-size:14px;color:var(--em)}
+.brand b{color:#fff;font-weight:800}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+.back{font-size:13px;border:1px solid var(--line);padding:7px 13px;border-radius:999px;color:var(--txt)}
+.back:hover{border-color:var(--em);color:var(--em)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--em);text-transform:uppercase;margin:0 0 6px}
+h1{font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--em)}
+.lead{color:var(--muted);font-size:16px;max-width:680px;margin:0 0 8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.meta b{color:var(--em);font-weight:700}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.jump a{font-size:12px;font-family:var(--mono);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted)}
+.jump a:hover{border-color:var(--em);color:var(--em)}
+h2{font-size:21px;margin:56px 0 8px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;scroll-margin-top:20px}
+h2 .n{font-family:var(--mono);color:var(--em);font-size:13px;border:1px solid var(--em);border-radius:6px;padding:2px 8px;white-space:nowrap}
+h3{font-size:16px;margin:0 0 6px;color:#fff}
+.card{background:linear-gradient(180deg,#0c1526,#091020);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:10px 0}
+.step{display:grid;grid-template-columns:58px 1fr;gap:16px;position:relative}
+.step+.step{margin-top:18px}
+.num{font-family:var(--mono);font-size:30px;font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(34,197,94,.65);line-height:1;text-align:center;padding-top:2px}
+.whatwhy{font-size:13.5px;color:#c9d6e8;margin:8px 0 0}
+.whatwhy b{color:var(--cy);font-weight:700}
+.check{font-size:13px;color:#0f141f;background:#22C55E;border-radius:6px;padding:2px 9px;font-weight:800;display:inline-block;font-family:var(--mono);margin-right:8px}
+.checkline{font-size:13.5px;color:#bfe7cd;background:rgba(34,197,94,.07);border:1px dashed rgba(34,197,94,.4);border-radius:8px;padding:8px 12px;margin-top:8px}
+.tip{font-size:13.5px;color:#a9c8e8;background:rgba(34,211,238,.06);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.tip b{color:var(--cy);font-weight:700}
+.warn{font-size:13.5px;color:#ffe0b3;background:rgba(245,158,11,.07);border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.warn b{color:#f5b44e;font-weight:700}
+.uc{display:grid;gap:14px}
+.uc .card{border-color:rgba(34,211,238,.28)}
+.uc h4{margin:0 0 4px;font-size:15px;color:var(--cy);font-family:var(--mono)}
+.uc p{margin:4px 0 8px;color:var(--muted);font-size:13.5px}
+.uc ul{margin:8px 0 0;padding-left:22px;color:#c9d6e8}
+.uc li{margin:6px 0}
+.uc ul b{color:#fff}
+.code{font-family:var(--mono);background:#060b15;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px;color:var(--em)}
+.q{background:rgba(34,197,94,.04);border-left:3px solid var(--line)}
+.q h4{margin:0 0 4px;color:#fff;font-size:15px}
+.q h4::before{content:"Q · ";color:var(--em);font-family:var(--mono)}
+.q p{margin:4px 0 0;color:#c9d6e8;font-size:14px}
+.q b{color:var(--em)}
+.gloss .term{font-size:14px;margin:8px 0}
+.gloss .term b{color:var(--cy);font-family:var(--mono)}
+.gloss .term span{color:#c9d6e8}
+.bottom{text-align:center;margin-top:60px}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--em);color:#04110a;font-weight:800;padding:14px 24px;border-radius:10px;font-size:15px;box-shadow:0 10px 30px -10px rgba(34,197,94,.6)}
+.cta:hover{filter:brightness(1.08)}
+.foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:11px;color:#5d7089;letter-spacing:1px}
+@media(max-width:560px){h1{font-size:26px}.step{grid-template-columns:44px 1fr}.num{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="./">✦ SKILL<b>//ORBIT</b></a>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <a class="back lang" href="guide-arsip.html">← ID</a>
+      <a class="back" href="./">Back to app ←</a>
+    </div>
+  </div>
+
+  <p class="kicker">Complete Guide · Module 3</p>
+  <h1>ARSIP — <em>Collection &amp; Account</em></h1>
+  <p class="lead">ARSIP is home to every skill you compose in FORGE. Here you manage your collection and — <b>optionally</b> — connect an <b>online account</b> so your skills can travel to any device. This guide walks through each step in detail.</p>
+  <div class="meta">
+    <span>⏱ ≈ 6–7 min read</span><span>🎯 All beginners</span><span>🔐 Account optional, not required</span>
+  </div>
+
+  <div class="jump">
+    <a href="#collect">01 · See your collection</a>
+    <a href="#signup">02 · Create an account</a>
+    <a href="#login">03 · Log in</a>
+    <a href="#forgot">04 · Forgot password</a>
+    <a href="#sync">05 · Sync across devices</a>
+    <a href="#manage">06 · Log out / delete account</a>
+    <a href="#bts">07 · Behind the scenes</a>
+    <a href="#uc">08 · Use cases</a>
+    <a href="#faq">09 · FAQ</a>
+    <a href="#gloss">10 · Glossary</a>
+  </div>
+
+  <div class="card" style="border-color:rgba(34,197,94,.4)">
+    <p style="margin:0"><b>Most important note:</b> <b>every core feature works even without logging in.</b> The online account is only an extra layer for <b>backup &amp; cross-device sync</b>. Skills saved on this device <b>are not lost</b> when you log in or out.</p>
+  </div>
+
+  <h2 id="collect"><span class="n">01</span> Open ARSIP &amp; see your collection</h2>
+  <div class="card step">
+    <div class="num">1</div>
+    <div>
+      <h3>Enter from the Home page</h3>
+      <p>Click the <b>"ARSIP — collection"</b> card, or the <b>ARSIP</b> tab. Every skill you've saved from FORGE appears here as a list / row of collection items.</p>
+      <p class="whatwhy"><b>Search it:</b> use the search box up top to filter by name or content in real time. What you can do with a skill: <b>open</b> (send it back to FORGE to edit), <b>rename</b>, <b>copy</b>, <b>download</b> as a <span class="code">SKILL.md</span> file, or <b>delete</b>.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> The skill you saved earlier shows up in the collection list.</p>
+    </div>
+  </div>
+
+  <h2 id="signup"><span class="n">02</span> Create an account (optional but recommended)</h2>
+  <div class="card step">
+    <div class="num">2</div>
+    <div>
+      <h3>Register with email &amp; password</h3>
+      <p>Press <b>"Sign up"</b>, fill in your email address and password, then submit. This account is used for <b>cloud storage</b>.</p>
+      <p class="whatwhy"><b>Security tips:</b> use a strong, unique password (mix of letters, numbers, symbols). Your session lasts up to 30 days, so you don't need to log in again every day.</p>
+      <p class="tip"><b>After registering:</b> if it's a brand-new account, the app automatically shows a <b>quick tour</b> as a welcome — follow it to the end to get to know every module.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> The status changes to "signed in", and the save-to-cloud button is now active.</p>
+    </div>
+  </div>
+
+  <h2 id="login"><span class="n">03</span> Log in</h2>
+  <div class="card step">
+    <div class="num">3</div>
+    <div>
+      <h3>Log in to use sync</h3>
+      <p>Press <b>"Log in"</b>, fill in your email &amp; password. If correct, you're connected to your account and can save / pull skills from the cloud.</p>
+      <p class="warn"><b>Caution:</b> only log in on devices you trust. Use <b>Log out</b> if the device is shared, so your account isn't open anywhere careless.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> Your account name / email appears as the signed-in status.</p>
+    </div>
+  </div>
+
+  <h2 id="forgot"><span class="n">04</span> Forgot your password?</h2>
+  <div class="card step">
+    <div class="num">4</div>
+    <div>
+      <h3>Reset via email</h3>
+      <p>Click <b>"Forgot password?"</b> → enter the registered email → the system sends a <b>6-digit code</b> to that email → enter the code → set a new password.</p>
+      <p class="whatwhy"><b>Why a code:</b> to make sure only the email owner can change the password. The code <b>expires in 15 minutes</b>, so use it soon.</p>
+      <p class="warn"><b>Haven't received an email?</b> Check the spam folder, make sure the email is correct, then try again. If it still doesn't arrive, the app shows a fallback code right inside the page so you're never stuck.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> After entering the code you can set a new password and log in.</p>
+    </div>
+  </div>
+
+  <h2 id="sync"><span class="n">05</span> Take your skills to another device</h2>
+  <div class="card step">
+    <div class="num">5</div>
+    <div>
+      <h3>Save to the cloud, then pull it elsewhere</h3>
+      <p>With the same account, skills you save to the cloud can be pulled / synced on another device. Great when moving from laptop to phone, or switching devices.</p>
+      <p class="whatwhy"><b>Why safer:</b> your skill list no longer depends on a single device — there's a backup copy on the server.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> Log in with the same account on a second device → the skill collection is available there.</p>
+    </div>
+  </div>
+
+  <h2 id="manage"><span class="n">06</span> Manage your account: Log out / Delete</h2>
+  <div class="card step">
+    <div class="num">6</div>
+    <div>
+      <h3>Log out</h3>
+      <p><b>Log out</b> = stop being connected on that device. The local collection stays intact; you can log in again anytime.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">7</div>
+    <div>
+      <h3>Delete account</h3>
+      <p><b>Delete account</b> = removes your cloud data (skills stored on the server). <b>Important:</b> this <b>only clears server data</b>; the locally stored collection on your device stays safe.</p>
+      <p class="warn"><b>Before deleting:</b> make sure you've exported / saved locally every cloud skill you want to keep.</p>
+    </div>
+  </div>
+
+  <h2 id="bts"><span class="n">07</span> Behind the scenes</h2>
+  <div class="card">
+    <ul style="margin:0 0 0 20px;color:#c9d6e8">
+      <li>Local saving writes to device storage; cloud saving sends to the SKILL//ORBIT server through an authenticated API.</li>
+      <li>Passwords are stored with strong hashing; each reset code is unique and lasts 15 minutes.</li>
+      <li>Sessions last 30 days — you don't need to log in constantly, except after log out / reset / delete.</li>
+    </ul>
+  </div>
+
+  <h2 id="uc"><span class="n">08</span> Use cases</h2>
+  <div class="uc">
+    <div class="card">
+      <h4>USE CASE 1 · Moving between devices</h4>
+      <ul>
+        <li>On the laptop: compose a skill, <b>SAVE</b>, then also save to the cloud.</li>
+        <li>On the phone: open ARSIP → <b>Log in</b> with the same account.</li>
+        <li>Pull / inspect the skill — available right away.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 2 · Backup before switching devices</h4>
+      <ul>
+        <li>Log in → make sure every skill is saved to the cloud.</li>
+        <li>Switch / format the device → log back in → pull everything back.</li>
+        <li>No skill is ever lost.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 3 · Share a team collection</h4>
+      <ul>
+        <li>A skill is saved &amp; backed up to the cloud.</li>
+        <li>A teammate logs in with the shared account → pulls the same skill.</li>
+        <li>Everyone uses a consistent working recipe.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="faq"><span class="n">09</span> FAQ</h2>
+  <div class="uc">
+    <div class="card q">
+      <h4>Is an account required?</h4>
+      <p>No. Every core feature (Forge, Radar, local ARSIP, guides, tour) works <b>without logging in</b>. The account is only for backup &amp; sync.</p>
+    </div>
+    <div class="card q">
+      <h4>Are local skills lost if I delete my account?</h4>
+      <p>No. Deleting the account only deletes server data. The locally stored collection on the device stays.</p>
+    </div>
+    <div class="card q">
+      <h4>What if I forgot which email I registered with?</h4>
+      <p>The reset code goes to the registered email; if you've forgotten which one that is, contact the app maintainer with proof of ownership.</p>
+    </div>
+    <div class="card q">
+      <h4>How long does a login session last?</h4>
+      <p>30 days. You won't be asked to log in repeatedly within that period.</p>
+    </div>
+    <div class="card q">
+      <h4>Is my password secure?</h4>
+      <p>Yes — passwords are stored hashed (not raw text) on the server, and sent over an encrypted connection.</p>
+    </div>
+  </div>
+
+  <h2 id="gloss"><span class="n">10</span> Glossary</h2>
+  <div class="card gloss">
+    <p class="term"><b>ARSIP</b> <span>— the collection module for every skill you've saved.</span></p>
+    <p class="term"><b>Cloud</b> <span>— server (internet) storage, accessed through an account.</span></p>
+    <p class="term"><b>Log in</b> <span>— connecting to your account to use sync.</span></p>
+    <p class="term"><b>Reset code</b> <span>— a temporary 6-digit (15-minute) code sent to email to change your password.</span></p>
+    <p class="term"><b>Session</b> <span>— how long your login lasts (30 days) before you must log in again.</span></p>
+    <p class="term"><b>Sync</b> <span>— matching your collection across devices through the cloud.</span></p>
+  </div>
+
+  <div class="bottom">
+    <a class="cta" href="./">← Back &amp; manage ARSIP</a>
+  </div>
+  <div class="foot">SKILL//ORBIT · ARSIP GUIDE · ASTRORAWAK © GITHUB</div>
+</div>
+</body>
+</html>

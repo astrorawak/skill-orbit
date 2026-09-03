@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Complete Guide — FORGE · Compose a Skill</title>
+<meta name="description" content="The most complete guide to composing skills in FORGE: step-by-step, why each step matters, use cases, FAQ, and glossary." />
+<style>
+:root{--bg:#05080f;--panel:#0a1120;--line:#1c3350;--em:#22C55E;--cy:#22d3ee;--txt:#e6edf7;--muted:#8ea3bd;--mono:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(34,197,94,.10),transparent 60%),
+  radial-gradient(900px 500px at 0% 110%,rgba(34,211,238,.07),transparent 55%),
+  var(--bg);color:var(--txt);line-height:1.75;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:-1;background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);opacity:.5}
+.wrap{max-width:920px;margin:0 auto;padding:26px 18px 110px}
+a{color:var(--cy);text-decoration:none}
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);letter-spacing:.5px;font-size:14px;color:var(--em)}
+.brand b{color:#fff;font-weight:800}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+.back{font-size:13px;border:1px solid var(--line);padding:7px 13px;border-radius:999px;color:var(--txt)}
+.back:hover{border-color:var(--em);color:var(--em)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--em);text-transform:uppercase;margin:0 0 6px}
+h1{font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--em)}
+.lead{color:var(--muted);font-size:16px;max-width:680px;margin:0 0 8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.meta b{color:var(--em);font-weight:700}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.jump a{font-size:12px;font-family:var(--mono);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted)}
+.jump a:hover{border-color:var(--em);color:var(--em)}
+h2{font-size:21px;margin:56px 0 8px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;scroll-margin-top:20px}
+h2 .n{font-family:var(--mono);color:var(--em);font-size:13px;border:1px solid var(--em);border-radius:6px;padding:2px 8px;white-space:nowrap}
+h3{font-size:16px;margin:0 0 6px;color:#fff}
+.card{background:linear-gradient(180deg,#0c1526,#091020);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:10px 0}
+.step{display:grid;grid-template-columns:58px 1fr;gap:16px;position:relative}
+.step+.step{margin-top:18px}
+.num{font-family:var(--mono);font-size:30px;font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(34,197,94,.65);line-height:1;text-align:center;padding-top:2px}
+.whatwhy{font-size:13.5px;color:#c9d6e8;margin:8px 0 0}
+.whatwhy b{color:var(--cy);font-weight:700}
+.check{font-size:13px;color:#0f141f;background:#22C55E;border-radius:6px;padding:2px 9px;font-weight:800;display:inline-block;font-family:var(--mono);margin-right:8px}
+.checkline{font-size:13.5px;color:#bfe7cd;background:rgba(34,197,94,.07);border:1px dashed rgba(34,197,94,.4);border-radius:8px;padding:8px 12px;margin-top:8px}
+.tip{font-size:13.5px;color:#a9c8e8;background:rgba(34,211,238,.06);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.tip b{color:var(--cy);font-weight:700}
+.warn{font-size:13.5px;color:#ffe0b3;background:rgba(245,158,11,.07);border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.warn b{color:#f5b44e;font-weight:700}
+.uc{display:grid;gap:14px}
+.uc .card{border-color:rgba(34,211,238,.28)}
+.uc h4{margin:0 0 4px;font-size:15px;color:var(--cy);font-family:var(--mono)}
+.uc p{margin:4px 0 8px;color:var(--muted);font-size:13.5px}
+.uc ul{margin:8px 0 0;padding-left:22px;color:#c9d6e8}
+.uc li{margin:6px 0}
+.uc ul b{color:#fff}
+.code{font-family:var(--mono);background:#060b15;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px;color:var(--em)}
+.q{background:rgba(34,197,94,.04);border-left:3px solid var(--line)}
+.q h4{margin:0 0 4px;color:#fff;font-size:15px}
+.q h4::before{content:"Q · ";color:var(--em);font-family:var(--mono)}
+.q p{margin:4px 0 0;color:#c9d6e8;font-size:14px}
+.q b{color:var(--em)}
+.gloss .term{font-size:14px;margin:8px 0}
+.gloss .term b{color:var(--cy);font-family:var(--mono)}
+.gloss .term span{color:#c9d6e8}
+.bottom{text-align:center;margin-top:60px}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--em);color:#04110a;font-weight:800;padding:14px 24px;border-radius:10px;font-size:15px;box-shadow:0 10px 30px -10px rgba(34,197,94,.6)}
+.cta:hover{filter:brightness(1.08)}
+.foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:11px;color:#5d7089;letter-spacing:1px}
+@media(max-width:560px){h1{font-size:26px}.step{grid-template-columns:44px 1fr}.num{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="./">✦ SKILL<b>//ORBIT</b></a>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <a class="back lang" href="guide-forge.html">← ID</a>
+      <a class="back" href="./">Back to app ←</a>
+    </div>
+  </div>
+
+  <p class="kicker">Complete Guide · Module 1</p>
+  <h1>FORGE — <em>Compose a Skill</em></h1>
+  <p class="lead">FORGE is where you <b>build a skill</b>: a working note / digital recipe you can save, reuse, and carry to any device. This guide walks you through it <b>step by step in real detail</b> — not just "what to click" but also <b>why</b> and <b>how to know you succeeded</b>.</p>
+  <div class="meta">
+    <span>⏱ ≈ 8–10 min read</span><span>🎯 All beginners</span><span>🧩 Works without login</span>
+  </div>
+
+  <div class="jump">
+    <a href="#isi">01 · What is a skill?</a>
+    <a href="#buka">02 · Open FORGE</a>
+    <a href="#bahan">03 · Pick a starting point (3 ways)</a>
+    <a href="#tulis">04 · Write the content</a>
+    <a href="#prev">05 · Check the preview</a>
+    <a href="#simpan">06 · Save</a>
+    <a href="#ultra">07 · Fastest path</a>
+    <a href="#bts">08 · Behind the scenes</a>
+    <a href="#uc">09 · Use cases</a>
+    <a href="#faq">10 · FAQ</a>
+    <a href="#glos">11 · Glossary</a>
+  </div>
+
+  <h2 id="isi"><span class="n">01</span> First, understand: what is a "skill"?</h2>
+  <div class="card">
+    <p style="margin-top:0">In SKILL//ORBIT, a <b>"skill"</b> is <b>a single text file called <span class="code">SKILL.md</span></b> holding two parts:</p>
+    <ul>
+      <li><b>Metadata</b> (on top) — the "identity card": name, description, version, author, tags. <b>Why it matters:</b> this is what other apps / agents use to recognize and search for your skill.</li>
+      <li><b>Content / procedure</b> (below) — the working recipe: when to use it, what's needed, how to run it step by step, and how to verify results are correct.</li>
+    </ul>
+    <p><b>Why a plain file?</b> Because simple text is <b>portable</b> (readable anywhere) and <b>standard</b> (not locked to one app). In FORGE you shape this file through an easy form, so you never need to memorize messy Markdown.</p>
+  </div>
+
+  <h2 id="buka"><span class="n">02</span> Open FORGE</h2>
+  <div class="card step">
+    <div class="num">1</div>
+    <div>
+      <h3>Enter from the Home page</h3>
+      <p>Open the app. On the landing page there are three big cards; click <b>"FORGE — compose a skill"</b>, or just the <b>FORGE</b> tab in the top menu.</p>
+      <p class="whatwhy"><b>What you'll see:</b> the page splits into two — <b>left</b> is TELUSUR / GALERI (browse &amp; pick a source repo), <b>right</b> is the wide <b>COMPOSE area</b> where you fill in every field.</p>
+      <p class="tip"><b>Important:</b> remember the split. <b>Left = pick &amp; browse, right = your working/crafting area.</b> Press <b>⛶ PREVIEW</b> whenever you want to see the full <span class="code">SKILL.md</span> file as a big pop-up.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> You see the browse panel on the left and the COMPOSE form on the right.</p>
+    </div>
+  </div>
+
+  <h2 id="bahan"><span class="n">03</span> Pick a starting point — 3 ways</h2>
+  <div class="card step">
+    <div class="num">2</div>
+    <div>
+      <h3>Way A — from GALERI (easiest)</h3>
+      <p>At the top-left there's a <b>"Galeri"</b> block with ready-to-use skill patterns (e.g. finance recap, content, procedures). Click a pattern, then press <b>"Terapkan / Apply"</b>.</p>
+      <p class="whatwhy"><b>Why use this:</b> the form fills with a clean structure as a starting point, so you only adjust it — fastest for beginners.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> The COMPOSE form fills in automatically and you can start editing.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">3</div>
+    <div>
+      <h3>Way B — from a GitHub repo (use "Racik")</h3>
+      <p>In the <b>"Telusur GitHub"</b> block, type a keyword (e.g. <span class="code">planning</span> or <span class="code">proposal</span>) and press <b>Search</b>. On a result you like, press <b>"Racik"</b>.</p>
+      <p class="whatwhy"><b>What happens behind the scenes:</b> the app pulls that public skill's content and turns it into an editable <b>draft</b>. A repo with no <span class="code">SKILL.md</span> still won't stop you — it builds a draft from the README. <b>Never dead-ends.</b> A panel "THE SKILL'S CONTENT (from repo)" shows the original before you Racik.</p>
+      <p class="warn"><b>Heads up:</b> a draft from a list-type repo (collection of links, not one skill) is usually just a general skeleton — tags reset to empty, so fill in your own tags and write the recipe so it's truly useful.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> The repo name is shown as the source, the form carries the draft, and you can start editing.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">4</div>
+    <div>
+      <h3>Way C — from scratch (manual)</h3>
+      <p>Clear all fields and type them yourself: <b>name</b>, <b>description</b> (short, ≤60 chars), <b>tags</b>, <b>author</b>, and <b>version</b>.</p>
+      <p class="whatwhy"><b>When it fits:</b> when you already know exactly the recipe you want to write and need no example.</p>
+    </div>
+  </div>
+
+  <h2 id="tulis"><span class="n">04</span> Write the skill content (the most important part)</h2>
+  <div class="card step">
+    <div class="num">5</div>
+    <div>
+      <h3>Fill the "content / how it works" field with a clear sequence of steps</h3>
+      <p>Write instructions as a simple order: <b>start with what → do what → when is it done / how to know it's right</b>. Imagine explaining to someone who has never done it.</p>
+      <div class="whatwhy"><b>Recommended writing style:</b>
+        <ul style="margin:8px 0 0 22px">
+          <li>Use short command sentences ("Open…", "Fill…", "Record…").</li>
+          <li>Break into at most 3–5 steps. One step = one action.</li>
+          <li>At the end, write a <b>completion criterion</b>: what result proves your step was right.</li>
+        </ul>
+      </div>
+      <p class="tip"><b>Tip:</b> a good skill is <b>sharp</b> — focus on one main job, not ten at once. If it gets too long, split it into several skills.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">6</div>
+    <div>
+      <h3>Choose "behaviors" &amp; "tools" (toggles)</h3>
+      <p>Below the content field are <b>behavior</b> (how many steps, whether it ends with a check) and <b>tool</b> (terminal / API / file) options describing how the skill is used. Click to toggle them on/off.</p>
+      <p class="whatwhy"><b>Why:</b> this metadata helps other apps decide when and how to use your skill correctly.</p>
+    </div>
+  </div>
+
+  <h2 id="prev"><span class="n">05</span> Check the PREVIEW</h2>
+  <div class="card step">
+    <div class="num">7</div>
+    <div>
+      <h3>Press the PREVIEW button to see your file</h3>
+      <p>Press <b>⛶ PRATINJAU / PREVIEW</b> and a <b>wide pop-up</b> opens showing the full <span class="code">SKILL.md</span> about to be saved. Read top to bottom: is the metadata tidy? Does the content cover every step you meant?</p>
+      <p class="whatwhy"><b>Note:</b> the preview is <b>view-only</b>. If anything is off, don't edit it there — close the pop-up and change it in the <b>COMPOSE area</b>; the preview follows.</p>
+      <p class="tip"><b>Extra:</b> your fields are <b>autosaved</b> on this device as you type, and you can also <b>Import a .SKILL.md</b> file to load it straight into the form.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> The preview pop-up reflects all your input and looks tidy with nothing awkward.</p>
+    </div>
+  </div>
+
+  <h2 id="simpan"><span class="n">06</span> SAVE</h2>
+  <div class="card step">
+    <div class="num">8</div>
+    <div>
+      <h3>Save to your collection &amp; (optional) cloud</h3>
+      <p>Press <b>"SIMPAN / SAVE"</b> in the preview pop-up (or the save button in the compose area). The skill goes to <b>ARSIP</b> (your collection on this device). If you're <b>signed in online</b>, you can also sync it to the server for other devices.</p>
+      <p class="whatwhy"><b>Other options:</b> <b>Copy</b> (file to clipboard) and <b>Download</b> (save as a <span class="code">.SKILL.md</span> file) — handy for sharing or storing outside the app.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> A confirmation appears and the skill shows in the ARSIP list.</p>
+    </div>
+  </div>
+
+  <h2 id="ultra"><span class="n">07</span> The fastest way (shortcut)</h2>
+  <div class="card">
+    <ol style="margin:0 0 0 20px;color:#c9d6e8">
+      <li>Open <b>FORGE</b>.</li>
+      <li>In <b>Galeri</b>, click the pattern closest to your need → <b>Apply</b>.</li>
+      <li>Change name &amp; description, type your steps in the content field.</li>
+      <li>Look at <b>Preview</b> → <b>Save</b>.</li>
+    </ol>
+    <p class="tip" style="margin-top:10px"><b>Result:</b> usually under 2 minutes for your first skill.</p>
+  </div>
+
+  <h2 id="bts"><span class="n">08</span> Behind the scenes</h2>
+  <div class="card">
+    <ul style="margin:0 0 0 20px;color:#c9d6e8">
+      <li><b>Racik</b> calls <span class="code">raw.githubusercontent.com</span>, tries to read <span class="code">SKILL.md</span>, and falls back to <span class="code">README.md</span> when missing — that's why it never comes back empty.</li>
+      <li>The <b>Galeri</b> panel holds built-in patterns; <b>Radar</b> pulls real star counts from the GitHub API.</li>
+      <li>Saving to <b>ARSIP</b> writes to this device's local storage; saving to <b>cloud</b> (after login) sends to the SKILL//ORBIT server through a secured API.</li>
+    </ul>
+  </div>
+
+  <h2 id="uc"><span class="n">09</span> Real use cases</h2>
+  <div class="uc">
+    <div class="card">
+      <h4>USE CASE 1 · Small-business bookkeeping</h4>
+      <p>A business owner in Sekadau wants a weekly stall finance recap without the hassle.</p>
+      <ul>
+        <li>Pick GALERI → the <b>"rekap-keuangan"</b> pattern → <b>Apply</b>.</li>
+        <li>Rename it to <span class="code">rekap-keuangan-warung</span>, description "Auto bookkeeping &amp; P&amp;L for a stall."</li>
+        <li>Write steps: record nightly turnover → fill fixed columns → compute the difference → save the summary.</li>
+        <li>Preview → tidy → <b>Save</b>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 2 · WiFi team procedure</h4>
+      <p>Make a WiFi installation checklist so the team stays consistent for every customer.</p>
+      <ul>
+        <li>From scratch: name = <span class="code">checklist-instalasi-wifi</span>.</li>
+        <li>Steps: survey location → mount AP → configure → test signal → record customer data.</li>
+        <li>Finish with a completion criterion (stable signal at every point).</li>
+        <li>Save; can be shared with the team as a standard reference.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 3 · Daily content pack</h4>
+      <p>Generate 5 content ideas from one topic every week.</p>
+      <ul>
+        <li>Use "Racik" on a popular public content repo (see RADAR).</li>
+        <li>Turn its content into a prompt: "Make 5 content ideas about topic X."</li>
+        <li>Save as a reusable skill.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="faq"><span class="n">10</span> Frequently asked</h2>
+  <div class="uc">
+    <div class="card q">
+      <h4>Why are my tags empty after Racik?</h4>
+      <p>Because the repo didn't supply tags, the app <b>clears them</b> (instead of borrowing a stray example tag). Type your own tags, separated by commas.</p>
+    </div>
+    <div class="card q">
+      <h4>The preview can't be edited, right?</h4>
+      <p>Correct. <b>Preview is just a view.</b> Change everything in the COMPOSE area; the preview follows automatically. It's designed so the final file stays tidy.</p>
+    </div>
+    <div class="card q">
+      <h4>What's the difference between SAVE, Copy, and Download?</h4>
+      <p><b>SAVE</b> → into ARSIP (the in-app collection). <b>Copy</b> → copies the file to the clipboard to paste anywhere. <b>Download</b> → saves a <span class="code">.SKILL.md</span> file on your device.</p>
+    </div>
+    <div class="card q">
+      <h4>Will my skills be lost without an account?</h4>
+      <p>No — as long as they're saved to ARSIP on that device, the local collection is safe. The online account is only for <b>backup &amp; moving between devices</b>.</p>
+    </div>
+    <div class="card q">
+      <h4>Can skill names use capital letters and spaces?</h4>
+      <p>Better to use lowercase, no spaces, with <span class="code">-</span> separators (e.g. <span class="code">rekap-keuangan-warung</span>). Spaces/special characters are more likely to clash.</p>
+    </div>
+  </div>
+
+  <h2 id="glos"><span class="n">11</span> Glossary</h2>
+  <div class="card gloss">
+    <p class="term"><b>SKILL.md</b> <span>— the composed text file, holding metadata + procedure.</span></p>
+    <p class="term"><b>Metadata</b> <span>— the "identity card" at the top: name, description, version, author, tags.</span></p>
+    <p class="term"><b>Galeri</b> <span>— the collection of ready-to-use skill patterns on the left panel.</span></p>
+    <p class="term"><b>Racik</b> <span>— the action that pulls a public skill from GitHub into an editable draft.</span></p>
+    <p class="term"><b>Preview</b> <span>— the pop-up that shows the final file as it's being formed.</span></p>
+    <p class="term"><b>ARSIP</b> <span>— your collection of every skill you've saved.</span></p>
+    <p class="term"><b>Tags</b> <span>— category labels for easier searching (comma-separated).</span></p>
+  </div>
+
+  <div class="bottom">
+    <a class="cta" href="./">← Back &amp; start composing</a>
+  </div>
+  <div class="foot">SKILL//ORBIT · FORGE GUIDE · ASTRORAWAK © GITHUB</div>
+</div>
+</body>
+</html>
