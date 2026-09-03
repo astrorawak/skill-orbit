@@ -69,12 +69,13 @@ const html = `<!doctype html>
   <nav class="tabs">
     <button class="tab on"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8-3a8 8 0 0 1-.2 1.8l2 1.5-2 3.5-2.4-1a8 8 0 0 1-3 1.7L13.9 21h-3.8l-.5-2.5a8 8 0 0 1-3-1.7l-2.4 1-2-3.5 2-1.5A8 8 0 0 1 4 12a8 8 0 0 1 .2-1.8l-2-1.5 2-3.5 2.4 1a8 8 0 0 1 3-1.7L10.1 3h3.8l.5 2.5a8 8 0 0 1 3 1.7l2.4-1 2 3.5-2 1.5c.1.6.2 1.2.2 1.8Z"/></svg> FORGE</button>
     <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9M12 12l4-4M12 7a5 5 0 0 0-5 5"/></svg> RADAR</button>
+    <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8Zm-9-3v5m0-5L3 8m9-3 9 3m-9 3 9-3m-9 3 0 9m0-9-9 3M3 8v8l9 5"/></svg> ARSIP</button>
   </nav>
   <div class="lang"><button class="lg on">ID</button><button class="lg">EN</button></div>
 </header>
 
 <main class="stage">
-  <div class="preview-banner">PRATINJAU STATIS — aplikasi interaktifnya berjalan di localhost:5199</div>
+  <div class="preview-banner">PRATINJAU STATIS — fitur interaktif penuh (TELUSUR GitHub + ARSIP) berjalan di aplikasi live</div>
 
   <section class="panel"> <h2 class="pnl-title"><span style="color:var(--accent)">◆</span> FORGE · PERACIK SKILL</h2>
     <div class="out"><div class="out-head"><h3 class="pnl-title" style="color:var(--cyan)">PRATINJAU</h3>
