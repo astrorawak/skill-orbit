@@ -13,13 +13,14 @@ app.use(express.json({ limit: "1mb" }));
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 const TOKEN_TTL = process.env.TOKEN_TTL || "30d";
 const store = await getStore();
+let dbReady = true;
 if (store.__ensureSchema) {
   try {
     await store.__ensureSchema();
     console.log("[db] skema siap");
   } catch (e) {
-    console.error("[db] gagal bootstrap skema:", e.message);
-    process.exit(1);
+    dbReady = false;
+    console.error("[db] gagal bootstrap skema (server tetap jalan):", e.message);
   }
 }
 
@@ -156,7 +157,32 @@ app.delete("/api/skills/:id", auth, async (req, res) => {
   }
 });
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "skill-orbit-api" }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "skill-orbit-api", db: dbReady ? "up" : "down" }));
+
+app.get("/health/db", async (_req, res) => {
+  try {
+    if (store.reach) await store.reach();
+    res.json({ ok: true, db: "up" });
+  } catch (e) {
+    res.status(500).json({ ok: false, db: "down", detail: e.message });
+  }
+});
 
 const PORT = Number(process.env.PORT || 1999);
-app.listen(PORT, () => console.log(`SKILL//ORBIT API on :${PORT} (store=${process.env.STORE || "mysql"})`));
+
+// boot marker — berguna utk diagnostik deploy (dibaca via API files/content)
+import fs from "node:fs";
+function mark(file, payload) {
+  try {
+    fs.writeFileSync(file, JSON.stringify(payload, null, 2).slice(0, 2000));
+  } catch (_e) {}
+}
+mark("boot-pre.txt", { pid: process.pid, at: new Date().toISOString(), port: PORT, store: process.env.STORE || "mysql", dbReady, cwd: process.cwd() });
+app.listen(PORT, () => {
+  console.log(`SKILL//ORBIT API on :${PORT} (store=${process.env.STORE || "mysql"})`);
+  mark("boot-ok.txt", { listening: true, pid: process.pid, port: PORT, host: process.env.HOST || "0.0.0.0", at: new Date().toISOString() });
+});
+app.on("error", (e) => {
+  console.error("[boot] error:", e.message);
+  mark("boot-err.txt", { error: e.message, code: e.code, at: new Date().toISOString() });
+});

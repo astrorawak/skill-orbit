@@ -12,6 +12,9 @@ export function createFileStore(fp) {
   const save = () => fs.writeFileSync(file, JSON.stringify(db, null, 2));
 
   return {
+    async reach() {
+      return true;
+    },
     async findUserByEmail(email) {
       return db.users.find((u) => u.email === email) || null;
     },

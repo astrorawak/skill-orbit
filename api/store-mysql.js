@@ -62,6 +62,9 @@ export function createMysqlStore() {
 
   return {
     __ensureSchema: ensureSchema,
+    async reach() {
+      await pool.query("SELECT 1");
+    },
     async findUserByEmail(email) {
       const [rows] = await pool.query("SELECT id,email,username,pw_hash,created_at FROM users WHERE email=? LIMIT 1", [email]);
       return col(rows[0]);
