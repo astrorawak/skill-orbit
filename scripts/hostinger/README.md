@@ -20,6 +20,7 @@ Jalur yang TERBUKTI (live, self-hosted):
   - Hubungan CORS dibatasi origin frontend: `ALLOWED_ORIGINS` di `config.php` (default `https://astrorawak.github.io`). Origin lain → tanpa header Allow-Origin → browser blokir.
   - Lupa sandi: bila SMTP belum diisi, kode reset ditampilkan inline (fallback 1-pemilik). Begitu SMTP dipasang (konfig `SMTP_HOST/PORT/USER/PASS/FROM/SECURE` di `config.php`), kode **dikirim via email** (PHPMailer v6.9.3, sudah di-upload ke `api/phpmailer/`); bila kirim gagal otomatis turun ke inline — alur tak pernah rusak.
   - SMTP memakai PHPMailer (pure-PHP, tak perlu composer): `api/phpmailer/{PHPMailer,SMTP,Exception}.php` + `language/phpmailer.lang-id.php`. Gagal connection → `sent_email:false` + `smtp_error` (graceful, bukan 500).
+  - **Status: SMTP Gmail TERPASANG & terverifikasi** (smtp.gmail.com:587, TLS, from `astrorawak@gmail.com`, App Password). Kredensial HANYA di `config.php` server/docroot — **jangan pernah commit ke repo**. Uji nyata 2026-09-03: `/auth/forgot` balas `sent_email:true` (Gmail terima 250 OK); kode reset dikirim ke inbox pemilik.
 - Database MySQL: `u864726623_skillorbit` (host `srv1868.hstgr.io`, user `u864726623_skillorbit`).
 - Kredensial DB/JWT: JANGAN commit ke repo. Ada di `api/.env` (untuk uji lokal) & `config.php` server.
 
