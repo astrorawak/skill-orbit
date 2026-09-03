@@ -35,6 +35,7 @@ const ICONS = {
   search: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.5-4.5",
   box: "M21 8l-9-5-9 5v8l9 5 9-5V8Zm-9-3v5m0-5L3 8m9-3 9 3m-9 3 9-3m-9 3 0 9m0-9-9 3M3 8v8l9 5",
   tour: "M12 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4M13 16l5 2 4-6-5-1-4 5Zm-2 1-1.5 3 3-1.5",
+  help: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
 };
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
   const [tourOpen, setTourOpen] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [firstRun, setFirstRun] = useState(false);
+  const [pageHelp, setPageHelp] = useState(null);
 
   // kunjungan pertama → tawarkan tur (banner sekali; tombol Tour selalu ada di pojok)
   useEffect(() => {
@@ -72,13 +74,13 @@ export default function App() {
       <Header tab={tab} setTab={setTab} lang={lang} setLang={setLang} onHome={() => setTab("home")} />
       <main className="stage">
         {tab === "home" ? (
-          <Home lang={lang} onGo={setTab} />
+          <Home lang={lang} onGo={setTab} onHelp={setPageHelp} />
         ) : tab === "forge" ? (
-          <Forge lang={lang} draft={draft} setDraft={setDraft} />
+          <Forge lang={lang} draft={draft} setDraft={setDraft} onHelp={setPageHelp} />
         ) : tab === "radar" ? (
-          <Radar lang={lang} />
+          <Radar lang={lang} onHelp={setPageHelp} />
         ) : (
-          <Arsip lang={lang} onOpen={loadDraft} onRegistered={startTour} />
+          <Arsip lang={lang} onOpen={loadDraft} onRegistered={startTour} onHelp={setPageHelp} />
         )}
       </main>
       <footer className="foot">
@@ -110,6 +112,10 @@ export default function App() {
           onDone={() => endTour(true)}
           onGo={setTab}
         />
+      )}
+
+      {pageHelp && (
+        <PageHelp lang={lang} page={pageHelp} onClose={() => setPageHelp(null)} />
       )}
     </div>
   );
@@ -147,8 +153,30 @@ function Tour({ lang, step, setStep, onSkip, onDone, onGo }) {
   );
 }
 
+// ===== Panduan per halaman (tombol ? tetap ada di header tiap modul) =====
+function PageHelp({ lang, page, onClose }) {
+  const L = lang === "id" ? LID : LEN;
+  const items = L.HELP[page] || [];
+  return (
+    <div className="tour-mask" onClick={onClose}>
+      <div className="tour-card help-card" onClick={(e) => e.stopPropagation()}>
+        <div className="tour-grab">✦ {L.helpTag}</div>
+        <h3 className="tour-title">{L.HELP_T[page]}</h3>
+        <ol className="help-list">
+          {items.map((it, i) => <li key={i}>{it}</li>)}
+        </ol>
+        <p className="help-persist">⟳ {L.helpPersist}</p>
+        <div className="tour-actions">
+          <span />
+          <button className="solid ok" onClick={onClose}>{L.helpClose} ✓</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ===== Landing: kartu-kartu besar, bisa diklik =====
-function Home({ lang, onGo }) {
+function Home({ lang, onGo, onHelp }) {
   const stashCount = useMemo(() => stashList().length, []);
   const L = lang === "id" ? LID : LEN;
   const cards = [
@@ -185,6 +213,7 @@ function Home({ lang, onGo }) {
       <div className="home-hero">
         <h1 className="home-kicker">{lang === "id" ? "GELEMBANG SKILL · PENDULU" : "SKILLS WAVE · PRECURSOR"}</h1>
         <p className="home-note">{L.homeNote}</p>
+        <button className="help-chip" onClick={() => onHelp("home")} title={L.helpBtnT}><Icon d={ICONS.help} size={15} />{L.helpBtn}</button>
       </div>
       <div className="card-grid">
         {cards.map((c) => (
@@ -251,7 +280,7 @@ function Chip({ active, onClick, children, tone }) {
   );
 }
 
-function Forge({ lang, draft = null, setDraft }) {
+function Forge({ lang, draft = null, setDraft, onHelp }) {
   const [name, setName] = useState("rekap-keuangan-ternak");
   const [desc, setDesc] = useState(lang === "id" ? "Rekap keuangan dan untung-rugi usaha ternak otomatis." : "Auto bookkeeping & P&L for a livestock venture.");
   const [author, setAuthor] = useState("Karman (karman-astro), Hermes Agent");
@@ -470,6 +499,7 @@ function Forge({ lang, draft = null, setDraft }) {
       <section className="panel inputs">
         <h2 className="pnl-title">
           <Icon d={ICONS.gear} /> {L.forgeTitle}
+          <button className="help-chip" onClick={() => onHelp("forge")} title={L.helpBtnT}><Icon d={ICONS.help} size={15} />{L.helpBtn}</button>
         </h2>
         <div className="block gal">
           <div className="gal-head">
@@ -621,7 +651,7 @@ function Forge({ lang, draft = null, setDraft }) {
   );
 }
 
-function Arsip({ lang, onOpen, onRegistered }) {
+function Arsip({ lang, onOpen, onRegistered, onHelp }) {
   const [items, setItems] = useState(stashList);
   const fileRef = useRef(null);
   const L = lang === "id" ? LID : LEN;
@@ -740,6 +770,7 @@ function Arsip({ lang, onOpen, onRegistered }) {
     <section className="panel arsip">
       <h2 className="pnl-title">
         <Icon d={ICONS.box} /> {L.arsipTitle}
+        <button className="help-chip" onClick={() => onHelp("arsip")} title={L.helpBtnT}><Icon d={ICONS.help} size={15} />{L.helpBtn}</button>
       </h2>
       <p className="muted">{L.arsipSub}</p>
       <p className="local-note">⚠️ {L.arsipLocalNote}</p>
@@ -837,7 +868,7 @@ function Arsip({ lang, onOpen, onRegistered }) {
   );
 }
 
-function Radar() {
+function Radar({ lang, onHelp }) {
   const [rows, setRows] = useState(SKILLS);
   const [q, setQ] = useState("");
   const [live, setLive] = useState(false);
@@ -885,7 +916,9 @@ function Radar() {
     <div className="radar">
       <div className="radar-head">
         <div>
-          <h2 className="pnl-title"><Icon d={ICONS.radar} /> RADAR <span className="muted">— trending agent skills</span></h2>
+          <h2 className="pnl-title"><Icon d={ICONS.radar} /> RADAR <span className="muted">— trending agent skills</span>
+            <button className="help-chip" onClick={() => onHelp("radar")} title={lang === "id" ? "Panduan halaman ini" : "This page's guide"}><Icon d={ICONS.help} size={15} />{lang === "id" ? "Panduan" : "Guide"}</button>
+          </h2>
           <p className="sub">{RADAR_SUB}</p>
         </div>
         <div className="radar-ctl">
@@ -966,6 +999,36 @@ const LID = {
     { t: "RADAR — tren", b: "Menampilkan skill yang lagi populer dengan bintang asli GitHub. Tekan REFRESH untuk angka terbaru.", go: "radar", btn: "Lanjut →" },
     { t: "ARSIP & akun", b: "Semua skill racikanmu ada di sini. Akun online (opsional) untuk menyimpan di semua perangkat — semua fitur tetap dipakai tanpa login.", go: "arsip", btn: "Selesai" },
   ],
+  helpBtn: "Panduan",
+  helpBtnT: "Panduan halaman ini",
+  helpTag: "Panduan",
+  helpClose: "Mengerti",
+  helpPersist: "Tombol Panduan (?) selalu ada di pojok header tiap halaman — buka kapan pun.",
+  HELP_T: { home: "Beranda", forge: "FORGE · racik skill", radar: "RADAR · tren", arsip: "ARSIP & akun" },
+  HELP: {
+    home: [
+      "Beranda memuat 3 kartu besar: Forge (buat skill), Radar (tren GitHub), Arsip (koleksi & cloud).",
+      "Klik kartu untuk masuk ke modulnya; logo di kiri atas kembali ke beranda.",
+      "Tombol Tour di pojok kanan bawah memandu seluruh aplikasi kapan pun.",
+    ],
+    forge: [
+      "Kiri — galeri: pilih pola skill lalu 'Terapkan', atau isi manual (nama, deskripsi, tag, penulis, versi).",
+      "Telusur GitHub: cari skill publik, klik 'Racik' untuk menariknya jadi draf yang bisa kamu ubah.",
+      "Kanan — PRATINJAU: file SKILL.md hasil racikanmu; itulah yang akan disimpan.",
+      "Klik SIMPAN untuk menyimpan skill ke koleksi (terbuka di tab ARSIP).",
+    ],
+    radar: [
+      "Daftar skill yang sedang populer — jumlah bintang dibaca langsung dari GitHub API (asli, bukan dikarang).",
+      "Tekan REFRESH untuk menarik angka terbaru.",
+      "Klik sebuah item untuk membuka repo sumbernya di GitHub.",
+    ],
+    arsip: [
+      "Semua skill rakitanmu tampil di sini — klik untuk membuka, mengedit, atau meng-ekspor ke file.",
+      "Akun online (opsional): Daftar / Masuk untuk menyimpan skill ke server dan mengambilnya di perangkat lain.",
+      "Lupa sandi? Isi email → kode reset dikirim ke email kamu (Gmail).",
+      "Hapus akun membersihkan data cloud; koleksi lokal di perangkat ini tetap aman.",
+    ],
+  },
   gal: "Galeri (pilih untuk diracik → Terapkan)",
   galPh: "cari skill…",
   galPhNo: "tak ketemu",
@@ -1075,6 +1138,36 @@ const LEN = {
     { t: "RADAR — trends", b: "Shows trending skills with real GitHub stars. Hit REFRESH for fresh numbers.", go: "radar", btn: "Next →" },
     { t: "ARSIP & account", b: "Every skill you compose lands here. An online account (optional) syncs them across devices — all features still work without logging in.", go: "arsip", btn: "Done" },
   ],
+  helpBtn: "Guide",
+  helpBtnT: "This page's guide",
+  helpTag: "Guide",
+  helpClose: "Got it",
+  helpPersist: "The Guide (?) button stays in the corner of each page's header — open it anytime.",
+  HELP_T: { home: "Home", forge: "FORGE · compose", radar: "RADAR · trends", arsip: "ARSIP & account" },
+  HELP: {
+    home: [
+      "Home holds 3 big cards: Forge (compose skills), Radar (GitHub trends), Arsip (stash & cloud).",
+      "Click a card to enter; the logo top-left returns to home.",
+      "The Tour button bottom-right walks you through the whole app anytime.",
+    ],
+    forge: [
+      "Left — gallery: pick a skill pattern and 'Apply', or fill in manually (name, description, tags, author, version).",
+      "Browse GitHub: search public skills, hit 'Racik' to pull one in as an editable draft.",
+      "Right — PREVIEW: the SKILL.md file your composition produces; that's what gets saved.",
+      "Click SAVE to store the skill in your collection (opens the ARSIP page).",
+    ],
+    radar: [
+      "Lists trending skills — star counts read straight from the GitHub API (real, not made up).",
+      "Hit REFRESH to pull the latest numbers.",
+      "Click an item to open its source repo on GitHub.",
+    ],
+    arsip: [
+      "Every skill you compose appears here — click to open, edit, or export to a file.",
+      "Online account (optional): Register / Sign in to push skills to the server and fetch them on other devices.",
+      "Forgot password? Enter your email — a reset code is emailed to you (Gmail).",
+      "Deleting your account clears cloud data; your local collection on this device stays safe.",
+    ],
+  },
   gal: "Gallery (pick skills to compose → Apply)",
   galPh: "search skills…",
   galPhNo: "not found",
