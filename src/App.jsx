@@ -464,7 +464,8 @@ function Arsip({ lang, onOpen }) {
   const [busy, setBusy] = useState(false);
   const [resetMode, setResetMode] = useState(false); // mode "Lupa sandi?"
   const [gotCode, setGotCode] = useState(false);     // kode sudah keluar
-  const [issuedCode, setIssuedCode] = useState("");  // kode dari server (ditampilkan sekali)
+  const [issuedCode, setIssuedCode] = useState("");
+  const [sentEmail, setSentEmail] = useState(false); // kode dikirim via email (bukan inline)
   const [code, setCode] = useState("");
   const [newPw, setNewPw] = useState("");
   function flash(m) { setCldMsg(m); setTimeout(() => setCldMsg(""), 2600); }
@@ -490,7 +491,7 @@ function Arsip({ lang, onOpen }) {
     ev.preventDefault();
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return flash(L.cldMailBad);
     setBusy(true);
-    try { const r = await forgotPassword(email.trim().toLowerCase()); setGotCode(true); setIssuedCode(r.reset_token || ""); flash(`${L.cldCodeOk} ${r.reset_token}`); }
+    try { const r = await forgotPassword(email.trim().toLowerCase()); const se = !!r.sent_email; setSentEmail(se); setGotCode(true); setIssuedCode(se ? "" : (r.reset_token || "")); flash(se ? L.cldCodeEmailed : `${L.cldCodeOk} ${r.reset_token}`); }
     catch (e) { flash(L.cldFail + " " + e.message); }
     setBusy(false);
   }
@@ -498,7 +499,7 @@ function Arsip({ lang, onOpen }) {
     ev.preventDefault();
     if (!code || newPw.length < 6) return flash(L.cldPwShort);
     setBusy(true);
-    try { await resetPassword(email.trim().toLowerCase(), code.trim(), newPw); setResetMode(false); setLogged(true); setNewPw(""); setCode(""); setGotCode(false); flash(L.cldResetOk); }
+    try { await resetPassword(email.trim().toLowerCase(), code.trim(), newPw); setResetMode(false); setLogged(true); setNewPw(""); setCode(""); setGotCode(false); setSentEmail(false); flash(L.cldResetOk); }
     catch (e) { flash(L.cldFail + " " + e.message); }
     setBusy(false);
   }
@@ -582,7 +583,7 @@ function Arsip({ lang, onOpen }) {
                 <button className="ghost sm" type="submit" disabled={busy}>{busy ? "…" : L.cldLogin}</button>
                 <button className="ghost sm accent" type="button" disabled={busy} onClick={doRegister}>{busy ? "…" : L.cldReg}</button>
               </div>
-              <button type="button" className="cloud-link" onClick={() => { setResetMode(!resetMode); setGotCode(false); setIssuedCode(""); setCode(""); setNewPw(""); }}>
+              <button type="button" className="cloud-link" onClick={() => { setResetMode(!resetMode); setGotCode(false); setIssuedCode(""); setCode(""); setNewPw(""); setSentEmail(false); }}>
                 {resetMode ? L.cldBackLogin : L.cldForgot}
               </button>
             </form>
@@ -593,8 +594,12 @@ function Arsip({ lang, onOpen }) {
                   <button className="ghost sm accent" type="submit" disabled={busy}>{busy ? "…" : L.cldSendCode}</button>
                 ) : (
                   <>
-                    <p className="cld-code">{L.cldCodeIs} <b>{issuedCode}</b> <span className="muted">{L.cldCodeTtl}</span></p>
-                    <input className="inp" placeholder={L.cldCodePh} value={code || issuedCode} onChange={(e) => setCode(e.target.value)} />
+                    {sentEmail ? (
+                      <p className="cld-note">{L.cldCodeEmailed}</p>
+                    ) : (
+                      <p className="cld-code">{L.cldCodeIs} <b>{issuedCode}</b> <span className="muted">{L.cldCodeTtl}</span></p>
+                    )}
+                    <input className="inp" placeholder={L.cldCodePh} value={code || (sentEmail ? "" : issuedCode)} onChange={(e) => setCode(e.target.value)} />
                     <input className="inp" type="password" placeholder={L.cldNewPwPh} value={newPw} onChange={(e) => setNewPw(e.target.value)} autoComplete="new-password" />
                     <button className="ghost sm accent" type="submit" disabled={busy}>{busy ? "…" : L.cldResetting}</button>
                   </>
@@ -844,6 +849,7 @@ const LID = {
   cldNewPwPh: "sandi baru (min. 6)",
   cldResetting: "Setel ulang & masuk",
   cldCodeOk: "Kode dikirim:",
+  cldCodeEmailed: "Kode telah dikirim ke emailmu. Cek inbox/spam, isi di bawah.",
   cldResetOk: "Sandi diubah, kamu masuk ✓",
   cldDelAccount: "Hapus akun",
   cldDelConfirm: "Hapus akun ini permanen? Seluruh skill di cloud ikut terhapus.",
@@ -927,6 +933,7 @@ const LEN = {
   cldNewPwPh: "new password (min. 6)",
   cldResetting: "Reset & sign in",
   cldCodeOk: "Code issued:",
+  cldCodeEmailed: "Code sent to your email — check inbox/spam, and enter it below.",
   cldResetOk: "Password changed, signed in ✓",
   cldDelAccount: "Delete account",
   cldDelConfirm: "Delete this account permanently? All cloud skills will be removed.",
