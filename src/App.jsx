@@ -34,12 +34,30 @@ const ICONS = {
   refresh: "M20 11a8 8 0 1 0-2 6m2-6v5m0-5h-5",
   search: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.5-4.5",
   box: "M21 8l-9-5-9 5v8l9 5 9-5V8Zm-9-3v5m0-5L3 8m9-3 9 3m-9 3 9-3m-9 3 0 9m0-9-9 3M3 8v8l9 5",
+  tour: "M12 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4M13 16l5 2 4-6-5-1-4 5Zm-2 1-1.5 3 3-1.5",
 };
 
 export default function App() {
   const [tab, setTab] = useState("home");
   const [lang, setLang] = useState("id");
   const [draft, setDraft] = useState(null);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  const [firstRun, setFirstRun] = useState(false);
+
+  // kunjungan pertama → tawarkan tur (banner sekali; tombol Tour selalu ada di pojok)
+  useEffect(() => {
+    if (!localStorage.getItem("so_tour_v1")) setFirstRun(true);
+  }, []);
+  function startTour() {
+    setTourStep(0);
+    setTourOpen(true);
+  }
+  function endTour(done) {
+    setTourOpen(false);
+    if (done) localStorage.setItem("so_tour_v1", "1");
+    setFirstRun(false);
+  }
 
   function loadDraft(d) {
     setDraft(d);
@@ -60,13 +78,71 @@ export default function App() {
         ) : tab === "radar" ? (
           <Radar lang={lang} />
         ) : (
-          <Arsip lang={lang} onOpen={loadDraft} />
+          <Arsip lang={lang} onOpen={loadDraft} onRegistered={startTour} />
         )}
       </main>
       <footer className="foot">
         <span>SKILL//ORBIT — {lang === "id" ? "pendahulu untuk gelombang skills. angka dari GitHub API." : "precursor to the skills wave. numbers from GitHub API."}</span>
         <span className="pulse-dot" /> <span>live</span>
       </footer>
+
+      {firstRun && (
+        <div className="tour-banner">
+          <span className="tour-banner-ico">✦</span>
+          <span className="tour-banner-t">{lang === "id" ? "Baru di sini?" : "New here?"}</span>
+          <button className="ghost sm accent" onClick={startTour}>
+            {lang === "id" ? "Mulai tur singkat →" : "Take a quick tour →"}
+          </button>
+          <button className="tour-banner-x" onClick={() => endTour(false)} aria-label={lang === "id" ? "Tutup" : "Close"}>✕</button>
+        </div>
+      )}
+
+      <button className="tour-fab" onClick={startTour} title={lang === "id" ? "Panduan penggunaan" : "Usage guide"}>
+        <Icon d={ICONS.tour} size={18} /> {lang === "id" ? "Tour" : "Tour"}
+      </button>
+
+      {tourOpen && (
+        <Tour
+          lang={lang}
+          step={tourStep}
+          setStep={setTourStep}
+          onSkip={() => endTour(false)}
+          onDone={() => endTour(true)}
+          onGo={setTab}
+        />
+      )}
+    </div>
+  );
+}
+
+// ===== Tur panduan (bisa dibuka ulang kapan pun) =====
+function Tour({ lang, step, setStep, onSkip, onDone, onGo }) {
+  const L = lang === "id" ? LID : LEN;
+  const s = L.TOUR_STEPS[step];
+  const last = step === L.TOUR_STEPS.length - 1;
+  function next() {
+    if (last) return onDone();
+    if (s.go) onGo(s.go);
+    setStep(step + 1);
+  }
+  return (
+    <div className="tour-mask" onClick={onSkip}>
+      <div className="tour-card" onClick={(e) => e.stopPropagation()}>
+        <div className="tour-grab">{step + 1}/{L.TOUR_STEPS.length} <span>·</span> {L.tourTag}</div>
+        <h3 className="tour-title">{s.t}</h3>
+        <p className="tour-body">{s.b}</p>
+        <div className="tour-dots">
+          {L.TOUR_STEPS.map((_, i) => (
+            <span key={i} className={i === step ? "t-dot on" : "t-dot"} />
+          ))}
+        </div>
+        <div className="tour-actions">
+          <button className="ghost sm" onClick={onSkip}>{L.tourSkip}</button>
+          <button className="solid ok" onClick={next}>
+            {last ? L.tourDone : (s.btn || L.tourNext)} {last ? "✓" : "→"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -545,7 +621,7 @@ function Forge({ lang, draft = null, setDraft }) {
   );
 }
 
-function Arsip({ lang, onOpen }) {
+function Arsip({ lang, onOpen, onRegistered }) {
   const [items, setItems] = useState(stashList);
   const fileRef = useRef(null);
   const L = lang === "id" ? LID : LEN;
@@ -569,7 +645,7 @@ function Arsip({ lang, onOpen }) {
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return flash(L.cldMailBad);
     if (pw.length < 6) return flash(L.cldPwShort);
     setBusy(true);
-    try { await register(email.trim().toLowerCase(), pw); setLogged(true); flash(L.cldRegOk); }
+    try { await register(email.trim().toLowerCase(), pw); setLogged(true); flash(L.cldRegOk); onRegistered && onRegistered(); }
     catch (e) { flash(L.cldFail + " " + e.message); }
     setBusy(false);
   }
@@ -878,6 +954,18 @@ const LID = {
   homeArsipT: "Arsip — koleksi & cloud",
   homeArsipD: "Simpan skillmu, masuk akun online, ambil di semua perangkat.",
   homeArsipB: "Buka Arsip →",
+  tourTag: "Tur",
+  tourSkip: "Lewati",
+  tourNext: "Lanjut",
+  tourDone: "Selesai",
+  TOUR_STEPS: [
+    { t: "Selamat datang", b: "SKILL//ORBIT menyimpan, meramut, dan membawa koleksi skill-mu. Tur ini memperkenalkan tiap modul — kapan pun mau, tekan tombol Tour di pojok kanan bawah.", go: null, btn: "Lanjut →" },
+    { t: "Beranda", b: "Tiga kartu besar: FORGE (racik skill), RADAR (tren GitHub), ARSIP (koleksi & cloud). Klik kartu untuk masuk.", go: "home", btn: "Lanjut →" },
+    { t: "FORGE — racik skill", b: "Buat skill dari galeri, dari repo GitHub, atau dari nol: isi form di kiri, lihat pratinjau file SKILL.md di kanan, lalu SIMPAN.", go: "forge", btn: "Lanjut →" },
+    { t: "Telusur GitHub", b: "Cari skill publik di GitHub lalu klik Racik untuk menariknya jadi draf yang bisa kamu ubah — tak buntu walau reponya tanpa SKILL.md.", go: "forge", btn: "Lanjut →" },
+    { t: "RADAR — tren", b: "Menampilkan skill yang lagi populer dengan bintang asli GitHub. Tekan REFRESH untuk angka terbaru.", go: "radar", btn: "Lanjut →" },
+    { t: "ARSIP & akun", b: "Semua skill racikanmu ada di sini. Akun online (opsional) untuk menyimpan di semua perangkat — semua fitur tetap dipakai tanpa login.", go: "arsip", btn: "Selesai" },
+  ],
   gal: "Galeri (pilih untuk diracik → Terapkan)",
   galPh: "cari skill…",
   galPhNo: "tak ketemu",
@@ -975,6 +1063,18 @@ const LEN = {
   homeArsipT: "Stash — collection & cloud",
   homeArsipD: "Save your skills, sign in online, and pick them up on any device.",
   homeArsipB: "Open Stash →",
+  tourTag: "Tour",
+  tourSkip: "Skip",
+  tourNext: "Next",
+  tourDone: "Done",
+  TOUR_STEPS: [
+    { t: "Welcome", b: "SKILL//ORBIT helps you stash, compose, and carry your skills anywhere. This tour introduces each module — reopen it anytime via the Tour button, bottom-right.", go: null, btn: "Next →" },
+    { t: "Home", b: "Three big cards: FORGE (compose skills), RADAR (GitHub trends), ARSIP (stash & cloud). Click a card to enter.", go: "home", btn: "Next →" },
+    { t: "FORGE — compose", b: "Build a skill from the gallery, a GitHub repo, or from scratch: fill the form left, preview the SKILL.md file right, then SAVE.", go: "forge", btn: "Next →" },
+    { t: "Browse GitHub", b: "Search public skills on GitHub and hit Racik to pull one in as a scratch draft you can edit — it never dead-ends, even if a repo lacks SKILL.md.", go: "forge", btn: "Next →" },
+    { t: "RADAR — trends", b: "Shows trending skills with real GitHub stars. Hit REFRESH for fresh numbers.", go: "radar", btn: "Next →" },
+    { t: "ARSIP & account", b: "Every skill you compose lands here. An online account (optional) syncs them across devices — all features still work without logging in.", go: "arsip", btn: "Done" },
+  ],
   gal: "Gallery (pick skills to compose → Apply)",
   galPh: "search skills…",
   galPhNo: "not found",
