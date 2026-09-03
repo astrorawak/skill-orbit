@@ -18,7 +18,8 @@ Jalur yang TERBUKTI (live, self-hosted):
   - `/health`, `/health/db`, `/auth/register`, `/auth/login`, `/auth/forgot`(kode), `/auth/reset`, `/me` (GET|DELETE), `/skills` (GET/POST), `/skills/{id}` (PUT/DELETE)
   - Auth: HMAC-JWT (header `Authorization: Bearer <token>`), password bcrypt; `auth_user` cek user masih ada → token akun terhapus langsung mati; skema idempotent (tabel `users` + kolom `reset_hash`/`reset_exp` otomatis).
   - Hubungan CORS dibatasi origin frontend: `ALLOWED_ORIGINS` di `config.php` (default `https://astrorawak.github.io`). Origin lain → tanpa header Allow-Origin → browser blokir.
-  - Lupa sandi: belum ada SMTP, jadi kode reset dikeluarkan dan DITAMPILKAN di respons (berlaku 15 mnt) — cocok untuk pemakaian satu pemilik; tinggal tambah pengiriman email nanti.
+  - Lupa sandi: bila SMTP belum diisi, kode reset ditampilkan inline (fallback 1-pemilik). Begitu SMTP dipasang (konfig `SMTP_HOST/PORT/USER/PASS/FROM/SECURE` di `config.php`), kode **dikirim via email** (PHPMailer v6.9.3, sudah di-upload ke `api/phpmailer/`); bila kirim gagal otomatis turun ke inline — alur tak pernah rusak.
+  - SMTP memakai PHPMailer (pure-PHP, tak perlu composer): `api/phpmailer/{PHPMailer,SMTP,Exception}.php` + `language/phpmailer.lang-id.php`. Gagal connection → `sent_email:false` + `smtp_error` (graceful, bukan 500).
 - Database MySQL: `u864726623_skillorbit` (host `srv1868.hstgr.io`, user `u864726623_skillorbit`).
 - Kredensial DB/JWT: JANGAN commit ke repo. Ada di `api/.env` (untuk uji lokal) & `config.php` server.
 
