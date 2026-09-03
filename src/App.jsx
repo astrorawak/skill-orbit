@@ -37,6 +37,7 @@ const ICONS = {
   tour: "M12 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4M13 16l5 2 4-6-5-1-4 5Zm-2 1-1.5 3 3-1.5",
   help: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
   edit: "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z",
+  up: "M12 19V5m0 0-5 5m5-5 5 5M4 3h16",
 };
 
 export default function App() {
@@ -158,8 +159,9 @@ function Tour({ lang, step, setStep, onSkip, onDone, onGo }) {
 function PageHelp({ lang, page, onClose }) {
   const L = lang === "id" ? LID : LEN;
   const items = L.HELP[page] || [];
-  const GUIDE = { forge: "guide-forge.html", radar: "guide-radar.html", arsip: "guide-arsip.html", home: "guide-forge.html" };
-  const h = GUIDE[page] || "guide-forge.html";
+  const ex = lang === "en" ? ".en" : "";
+  const GUIDE = { forge: "guide-forge" + ex + ".html", radar: "guide-radar" + ex + ".html", arsip: "guide-arsip" + ex + ".html", home: "guide-forge" + ex + ".html" };
+  const h = GUIDE[page] || "guide-forge" + ex + ".html";
   return (
     <div className="tour-mask" onClick={onClose}>
       <div className="tour-card help-card" onClick={(e) => e.stopPropagation()}>
@@ -360,7 +362,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         })
       );
     } catch (e) {
-      setGhErr(L.errSearch + e.message);
+      setGhErr((e && e.name === "TypeError" ? L.errNet : L.errSearch) + (e && e.message ? e.message : ""));
     } finally {
       setGhLoading(false);
       setGhDone(true);
@@ -531,6 +533,70 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     if (lang === "id") setDesc("Rekap keuangan dan untung-rugi usaha ternak otomatis.");
     else setDesc("Auto bookkeeping & P&L for a livestock venture.");
   }, [lang]);
+
+  // ============ AUTOSAVE DRAF (perangkat ini) ============
+  const DRAFT_KEY = "skillorbit-forge-draft-v1";
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    // pulihkan draf tersimpan bila tak ada draf dari ARSIP
+    if (!draft) {
+      try {
+        const s = localStorage.getItem(DRAFT_KEY);
+        if (s) {
+          const d = JSON.parse(s) || {};
+          if (d.name) setName(d.name);
+          if (d.desc !== undefined) setDesc(d.desc);
+          if (d.author) setAuthor(d.author);
+          if (d.tags) setTags(d.tags);
+          if (d.related !== undefined) setRelated(d.related);
+          if (d.src) setSrc(d.src);
+          if (d.summary !== undefined) setSummary(d.summary);
+          if (Array.isArray(d.behaviors) && d.behaviors.length) setBehaviors(d.behaviors);
+          if (Array.isArray(d.tools) && d.tools.length) setTools(d.tools);
+          if (d.niche !== undefined) setNiche(d.niche);
+          if (d.loadedFrom) setLoadedFrom(d.loadedFrom);
+        }
+      } catch {}
+    }
+    setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ name, desc, author, tags, related, src, summary, behaviors, tools, niche, loadedFrom })
+      );
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, name, desc, author, tags, related, src, summary, behaviors, tools, niche, loadedFrom]);
+
+  // ============ IMPORT FILE .SKILL.md → draf ============
+  const importRef = useRef(null);
+  function importSkillFile(ev) {
+    const f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    const rdr = new FileReader();
+    rdr.onload = () => {
+      const txt = String(rdr.result || "");
+      const p = parseSkillFile(txt);
+      if (!txt.trim() || !(p.name || p.desc || p.summary)) {
+        setGhInfo(L.impBad);
+        setTimeout(() => setGhInfo(""), 2600);
+        return;
+      }
+      setName(p.name || f.name.replace(/\.SKILL\.md$/i, ""));
+      if (p.desc) setDesc(p.desc);
+      if (p.author) setAuthor(p.author);
+      if (p.tags) setTags(p.tags);
+      if (p.related) setRelated(p.related);
+      if (p.summary) setSummary(p.summary);
+      setLoadedFrom(f.name);
+    };
+    rdr.readAsText(f);
+    ev.target.value = "";
+  }
 
   async function copy() {
     try {
@@ -723,9 +789,14 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           <h2 className="pnl-title"><Icon d={ICONS.head} /> {L.composeTitle}</h2>
           <div className="out-actions">
             {loadedFrom && <span className="loaded-note">⬒ {L.loaded}({loadedFrom})</span>}
+            <button className="ghost" onClick={() => importRef.current && importRef.current.click()} title={L.impBtn}>
+              <Icon d={ICONS.up} size={13} /> {L.impBtn}
+            </button>
+            <input ref={importRef} type="file" accept=".md,.markdown,.txt" style={{ display: "none" }} onChange={importSkillFile} />
             <button className="solid" onClick={() => setPvOpen(true)}>⛶ {L.preview}</button>
           </div>
         </div>
+        <p className="md-cap draft-auto">● {L.draftAuto}</p>
 
         {loadedFrom ? (
           <p className="md-cap">{L.composeSub}</p>
@@ -839,13 +910,23 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
   const [code, setCode] = useState("");
   const [newPw, setNewPw] = useState("");
   function flash(m) { setCldMsg(m); setTimeout(() => setCldMsg(""), 2600); }
+  // ubah error mentah (dari cloud/HTTP) jadi pesan ramah.
+  function cldMsgOf(e) {
+    const m = (e && e.message) || "";
+    if (m === "no_session") return L.cldNeedAuth;
+    if (/TypeError|fetch/i.test(m)) return L.errNet;
+    if (/HTTP (50|52|53|000)/.test(m)) return L.err500;
+    if (/HTTP 401|HTTP 403/.test(m)) return L.cldBadCred;
+    if (/HTTP 404/.test(m)) return L.cldNotFound;
+    return m || L.cldFail;
+  }
   async function doRegister(ev) {
     ev.preventDefault();
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return flash(L.cldMailBad);
     if (pw.length < 6) return flash(L.cldPwShort);
     setBusy(true);
     try { await register(email.trim().toLowerCase(), pw); setLogged(true); flash(L.cldRegOk); onRegistered && onRegistered(); }
-    catch (e) { flash(L.cldFail + " " + e.message); }
+    catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
   async function doLogin(ev) {
@@ -853,7 +934,7 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
     if (!email || !pw) return;
     setBusy(true);
     try { await login(email.trim().toLowerCase(), pw); setLogged(true); flash(L.cldLoginOk); }
-    catch (e) { flash(L.cldFail + " " + e.message); }
+    catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
   function doLogout() { clearSession(); setLogged(false); setPw(""); setResetMode(false); setGotCode(false); setCode(""); setNewPw(""); flash(L.cldLogout); }
@@ -862,7 +943,7 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return flash(L.cldMailBad);
     setBusy(true);
     try { const r = await forgotPassword(email.trim().toLowerCase()); const se = !!r.sent_email; setSentEmail(se); setGotCode(true); setIssuedCode(se ? "" : (r.reset_token || "")); flash(se ? L.cldCodeEmailed : `${L.cldCodeOk} ${r.reset_token}`); }
-    catch (e) { flash(L.cldFail + " " + e.message); }
+    catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
   async function doReset(ev) {
@@ -870,20 +951,20 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
     if (!code || newPw.length < 6) return flash(L.cldPwShort);
     setBusy(true);
     try { await resetPassword(email.trim().toLowerCase(), code.trim(), newPw); setResetMode(false); setLogged(true); setNewPw(""); setCode(""); setGotCode(false); setSentEmail(false); flash(L.cldResetOk); }
-    catch (e) { flash(L.cldFail + " " + e.message); }
+    catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
   async function doDeleteAccount() {
     if (!window.confirm(L.cldDelConfirm)) return;
     setBusy(true);
     try { await deleteAccount(); setLogged(false); setEmail(""); setPw(""); reload(); flash(L.cldDelOk); }
-    catch (e) { flash(L.cldFail + " " + e.message); }
+    catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
   async function doPush() {
     setBusy(true);
     try { const r = await syncUp(items); flash(`${L.cldPushed} ${r.added} · ${L.cldSkipped} ${r.skipped}`); }
-    catch (e) { flash(L.cldNeedAuth + " " + e.message); }
+    catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
   async function doPull() {
@@ -892,7 +973,7 @@ function Arsip({ lang, onOpen, onRegistered, onHelp }) {
       const r = await syncDown(stashImport);
       reload();
       flash(`${L.cldPulled} ${r.down} · ${L.cldAdded} ${r.added}`);
-    } catch (e) { flash(L.cldNeedAuth + " " + e.message); }
+    } catch (e) { flash(cldMsgOf(e)); }
     setBusy(false);
   }
 
@@ -1265,6 +1346,9 @@ const LID = {
   preview: "PRATINJAU",
   previewCap: "File SKILL.md (mentah) — hasil racikan yang akan kamu simpan.",
   composeTitle: "MERACIK",
+  draftAuto: "Isian tersimpan otomatis di perangkat ini.",
+  impBtn: "Import SKILL.md",
+  impBad: "⚠️ File bukan SKILL.md yang dikenali.",
   emptyCompose: "Pilih & Racik sebuah repo dari panel TELUSUR / GALERI di kiri. Di sinilah kamu meracik — isi kolomnya, lalu tekan Pratinjau untuk melihat hasilnya.",
   composeSub: "Isi kolom di bawah ini — tiap ketukan langsung tercatat. Tekan Pratinjau untuk melihat file SKILL.md hasil racikanmu.",
   closeTxt: "Tutup",
@@ -1292,6 +1376,8 @@ const LID = {
   ghPrevLoading: "Memuat isi repo…",
   errLimit: "⛔ Jatah API GitHub sementara habis. Tunggu sebentar, lalu coba lagi.",
   errSearch: "⚠️ Pencarian gagal: ",
+  errNet: "💻 Tak bisa terhubung ke server. Cek internet/izin jaringan di peramban, lalu coba lagi.",
+  err500: "🚦 Server sedang bermasalah. Coba lagi sebentar lagi.",
   errNoSkill: (r) => `⚠️ Tak ada SKILL.md ditemukan di ${r}.`,
   ghNoSkillInfo: "Reponya tak punya file SKILL.md, jadi saya buat draf darinya (dari README atau nama repo) — silakan rapikan di Forge sebelum disimpan.",
   ghNoSkillDraft: (r) => `Draf skill dari repo ${r}.`,
@@ -1331,7 +1417,9 @@ const LID = {
   cldRegOk: "Akun dibuat ✓",
   cldLoginOk: "Berhasil masuk ✓",
   cldLogoutMsg: "Keluar dari akun.",
-  cldFail: "Gagal:",
+  cldFail: "Gagal: ",
+  cldBadCred: "🔑 Email atau sandi salah / tak diizinkan.",
+  cldNotFound: "🔍 Data tidak ditemukan di server.",
   cldNeedAuth: "Perlu masuk akun dulu.",
   cldPushed: "Tersimpan ke cloud:",
   cldPulled: "Diambil dari cloud:",
@@ -1446,6 +1534,9 @@ const LEN = {
   preview: "PREVIEW",
   previewCap: "SKILL.md file (raw) — the recipe you'll save.",
   composeTitle: "COMPOSE",
+  draftAuto: "Fields are autosaved on this device.",
+  impBtn: "Import SKILL.md",
+  impBad: "⚠️ File isn't a recognized SKILL.md.",
   emptyCompose: "Pick & Compose a repo from the TELUSUR / GALERI panel on the left. This is where you craft — fill the fields, then press Preview to see the result.",
   composeSub: "Fill the fields below — every keystroke is recorded. Press Preview to see the SKILL.md you've crafted.",
   closeTxt: "Close",
@@ -1473,6 +1564,8 @@ const LEN = {
   ghPrevLoading: "Loading repo content…",
   errLimit: "⛔ GitHub API rate-limit reached. Wait a bit and retry.",
   errSearch: "⚠️ Search failed: ",
+  errNet: "💻 Can't reach the server. Check your internet/network permission, then retry.",
+  err500: "🚦 Server is having trouble. Retry in a moment.",
   errNoSkill: (r) => `⚠️ No SKILL.md found in ${r}.`,
   ghNoSkillInfo: "This repo has no SKILL.md, so I made a draft from it (its README or name) — polish it in Forge before saving.",
   ghNoSkillDraft: (r) => `Draft skill from repo ${r}.`,
@@ -1512,7 +1605,9 @@ const LEN = {
   cldRegOk: "Account created ✓",
   cldLoginOk: "Signed in ✓",
   cldLogoutMsg: "Signed out.",
-  cldFail: "Failed:",
+  cldFail: "Failed: ",
+  cldBadCred: "🔑 Wrong email or password / not allowed.",
+  cldNotFound: "🔍 Data not found on server.",
   cldNeedAuth: "Please sign in first.",
   cldPushed: "Saved to cloud:",
   cldPulled: "Fetched from cloud:",

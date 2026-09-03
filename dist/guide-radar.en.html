@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Complete Guide — RADAR · Skill Trends</title>
+<meta name="description" content="Complete guide to using RADAR: read real GitHub stars, draw ideas, and turn trends into your own skills — with FAQ &amp; glossary." />
+<style>
+:root{--bg:#05080f;--panel:#0a1120;--line:#1c3350;--em:#22C55E;--cy:#22d3ee;--txt:#e6edf7;--muted:#8ea3bd;--mono:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(34,211,238,.09),transparent 60%),
+  radial-gradient(900px 500px at 0% 110%,rgba(34,197,94,.06),transparent 55%),
+  var(--bg);color:var(--txt);line-height:1.75;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:-1;background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);opacity:.5}
+.wrap{max-width:920px;margin:0 auto;padding:26px 18px 110px}
+a{color:var(--cy);text-decoration:none}
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);letter-spacing:.5px;font-size:14px;color:var(--em)}
+.brand b{color:#fff;font-weight:800}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+.back{font-size:13px;border:1px solid var(--line);padding:7px 13px;border-radius:999px;color:var(--txt)}
+.back:hover{border-color:var(--em);color:var(--em)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--cy);text-transform:uppercase;margin:0 0 6px}
+h1{font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--cy)}
+.lead{color:var(--muted);font-size:16px;max-width:680px;margin:0 0 8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.meta b{color:var(--cy);font-weight:700}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.jump a{font-size:12px;font-family:var(--mono);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted)}
+.jump a:hover{border-color:var(--em);color:var(--em)}
+h2{font-size:21px;margin:56px 0 8px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;scroll-margin-top:20px}
+h2 .n{font-family:var(--mono);color:var(--cy);font-size:13px;border:1px solid var(--cy);border-radius:6px;padding:2px 8px;white-space:nowrap}
+h3{font-size:16px;margin:0 0 6px;color:#fff}
+.card{background:linear-gradient(180deg,#0c1526,#091020);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:10px 0}
+.step{display:grid;grid-template-columns:58px 1fr;gap:16px;position:relative}
+.step+.step{margin-top:18px}
+.num{font-family:var(--mono);font-size:30px;font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(34,211,238,.65);line-height:1;text-align:center;padding-top:2px}
+.whatwhy{font-size:13.5px;color:#c9d6e8;margin:8px 0 0}
+.whatwhy b{color:var(--em);font-weight:700}
+.check{font-size:13px;color:#0f141f;background:#22C55E;border-radius:6px;padding:2px 9px;font-weight:800;display:inline-block;font-family:var(--mono);margin-right:8px}
+.checkline{font-size:13.5px;color:#bfe7cd;background:rgba(34,197,94,.07);border:1px dashed rgba(34,197,94,.4);border-radius:8px;padding:8px 12px;margin-top:8px}
+.tip{font-size:13.5px;color:#a9c8e8;background:rgba(34,211,238,.06);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 0}
+.tip b{color:var(--cy);font-weight:700}
+.uc{display:grid;gap:14px}
+.uc .card{border-color:rgba(34,197,94,.28)}
+.uc h4{margin:0 0 4px;font-size:15px;color:var(--em);font-family:var(--mono)}
+.uc p{margin:4px 0 8px;color:var(--muted);font-size:13.5px}
+.uc ul{margin:8px 0 0;padding-left:22px;color:#c9d6e8}
+.uc li{margin:6px 0}
+.uc ul b{color:#fff}
+.code{font-family:var(--mono);background:#060b15;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px;color:var(--cy)}
+.q{background:rgba(34,211,238,.04);border-left:3px solid var(--line)}
+.q h4{margin:0 0 4px;color:#fff;font-size:15px}
+.q h4::before{content:"Q · ";color:var(--cy);font-family:var(--mono)}
+.q p{margin:4px 0 0;color:#c9d6e8;font-size:14px}
+.q b{color:var(--cy)}
+.gloss .term{font-size:14px;margin:8px 0}
+.gloss .term b{color:var(--em);font-family:var(--mono)}
+.gloss .term span{color:#c9d6e8}
+.bottom{text-align:center;margin-top:60px}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--em);color:#04110a;font-weight:800;padding:14px 24px;border-radius:10px;font-size:15px;box-shadow:0 10px 30px -10px rgba(34,197,94,.6)}
+.cta:hover{filter:brightness(1.08)}
+.foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:11px;color:#5d7089;letter-spacing:1px}
+@media(max-width:560px){h1{font-size:26px}.step{grid-template-columns:44px 1fr}.num{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="./">✦ SKILL<b>//ORBIT</b></a>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <a class="back lang" href="guide-radar.html">← ID</a>
+      <a class="back" href="./">Back to app ←</a>
+    </div>
+  </div>
+
+  <p class="kicker">Complete Guide · Module 2</p>
+  <h1>RADAR — <em>Skill Trends</em></h1>
+  <p class="lead">RADAR is a "popularity map": a list of skills widely used by the builder community. The star counts are <b>read directly, honestly, from the GitHub API</b> — not made-up numbers — so you can read which way the wind is blowing and mine ideas for your own skills.</p>
+  <div class="meta">
+    <span>⏱ ≈ 5–6 min read</span><span>🎯 All beginners</span><span>📡 Real stars from GitHub API</span>
+  </div>
+
+  <div class="jump">
+    <a href="#open">01 · Open RADAR</a>
+    <a href="#read">02 · Read the list</a>
+    <a href="#refresh">03 · Refresh the numbers</a>
+    <a href="#source">04 · Visit the source</a>
+    <a href="#turn">05 · Turn a trend into your skill</a>
+    <a href="#bts">06 · Behind the scenes</a>
+    <a href="#uc">07 · Use cases</a>
+    <a href="#faq">08 · FAQ</a>
+    <a href="#gloss">09 · Glossary</a>
+  </div>
+
+  <h2 id="open"><span class="n">01</span> Open RADAR</h2>
+  <div class="card step">
+    <div class="num">1</div>
+    <div>
+      <h3>Enter from the Home page</h3>
+      <p>Click the <b>"RADAR — trends"</b> card, or the <b>RADAR</b> tab in the top menu. Every time the tab opens, the app automatically loads the latest data.</p>
+      <p class="whatwhy"><b>What you'll see:</b> a list of skill rows, each with a name, a short description, and a star count (★).</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> The list appears with star numbers — that means the GitHub connection is working.</p>
+    </div>
+  </div>
+
+  <h2 id="read"><span class="n">02</span> Read the list</h2>
+  <div class="card step">
+    <div class="num">2</div>
+    <div>
+      <h3>What each row means</h3>
+      <p><b>Name</b> = the skill's identity. <b>Description</b> = one line about what it does. <b>Stars (★)</b> = how many people starred/liked that skill on GitHub.</p>
+      <div class="whatwhy"><b>How to read it smartly:</b>
+        <ul style="margin:8px 0 0 22px">
+          <li><b>High stars</b> → well tested by many people; usually tidy and stable format.</li>
+          <li><b>Low but unique stars</b> → could be a fresh idea few people notice.</li>
+          <li>Notice <b>patterns</b> that repeat across popular skills: those are the proven "standard ways".</li>
+        </ul>
+      </div>
+      <p class="tip"><b>Tip:</b> don't just chase the most popular. RADAR is for <b>finding a way of working / a language</b>, not just competing on star counts.</p>
+    </div>
+  </div>
+
+  <h2 id="refresh"><span class="n">03</span> Refresh the numbers</h2>
+  <div class="card step">
+    <div class="num">3</div>
+    <div>
+      <h3>Press REFRESH</h3>
+      <p>The <b>REFRESH</b> button pulls the <b>latest</b> star counts from GitHub. Useful if the page has been open a while and you want to make sure the numbers are fresh.</p>
+      <p class="whatwhy"><b>Why sometimes needed:</b> popularity changes fast. Refreshing helps you catch shifts before making a decision.</p>
+    </div>
+  </div>
+
+  <h2 id="source"><span class="n">04</span> Visit the source</h2>
+  <div class="card step">
+    <div class="num">4</div>
+    <div>
+      <h3>Click a skill</h3>
+      <p>Clickable rows open the <b>source repo on GitHub</b> in a new tab. There you can inspect the skill content, read its structure, and judge whether the pattern fits your need.</p>
+      <p class="whatwhy"><b>Why useful:</b> the GitHub page shows the original files (e.g. <span class="code">SKILL.md</span>/README), history, and how the author put it together — the most authentic learning source.</p>
+      <p class="checkline"><span class="check">SUCCESS CHECK</span> A new tab opens to the matching GitHub repo page.</p>
+    </div>
+  </div>
+
+  <h2 id="turn"><span class="n">05</span> Turn a trend into your skill (the heart of this app)</h2>
+  <div class="card step">
+    <div class="num">5</div>
+    <div>
+      <h3>Find → copy the flow → compose your own version</h3>
+      <p>This is RADAR's most valuable part — using it to create work, not just read:</p>
+      <ol style="margin:8px 0 0 20px;color:#c9d6e8">
+        <li>In RADAR, pick a skill that catches your eye, open its repo.</li>
+        <li>Study its <b>structure &amp; patterns</b> (what parts, what language, what steps).</li>
+        <li>Open <b>FORGE</b> → in the <b>Telusur GitHub</b> block, search that repo → press <b>Racik</b> to make it a draft.</li>
+        <li>Turn the draft into <b>your own version</b> better suited to your local need / business.</li>
+        <li><b>SAVE</b>.</li>
+      </ol>
+      <p class="tip"><b>Tip:</b> the best results come from <b>adapting, not copy-pasting</b>. Create a pattern you like, then adjust the content.</p>
+    </div>
+  </div>
+
+  <h2 id="bts"><span class="n">06</span> Behind the scenes</h2>
+  <div class="card">
+    <ul style="margin:0 0 0 20px;color:#c9d6e8">
+      <li>RADAR reads the skill list and requests <b>the latest star counts</b> from the GitHub REST API when the page loads.</li>
+      <li>Clicking an item opens the <b>official repo page</b> on GitHub — not a local copy, so it's always the latest.</li>
+      <li>The <b>Racik</b> button in FORGE uses that repo's identity to pull its files into a draft.</li>
+    </ul>
+  </div>
+
+  <h2 id="uc"><span class="n">07</span> Use cases</h2>
+  <div class="uc">
+    <div class="card">
+      <h4>USE CASE 1 · Find a skill-idea direction</h4>
+      <ul>
+        <li>Open RADAR, note the highest-starred skills (widely used by teams).</li>
+        <li>Break down <b>their patterns</b>: tidy format, short description, clear steps.</li>
+        <li>Continue to FORGE → search that repo → <b>Racik</b> → adjust to your need.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 2 · Research before building</h4>
+      <ul>
+        <li>You want to make a "how to write a proposal" skill.</li>
+        <li>In RADAR search the booming proposal/template theme, open its repo.</li>
+        <li>See the structure most use → build a version more suited to your local business.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 3 · Track what's rising</h4>
+      <ul>
+        <li>Build a habit: open RADAR weekly, press REFRESH.</li>
+        <li>Jot down skills that grew significantly.</li>
+        <li>Before others do, compose your version for your own need.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="faq"><span class="n">08</span> FAQ</h2>
+  <div class="uc">
+    <div class="card q">
+      <h4>Are the star numbers made up?</h4>
+      <p>No. The numbers are read <b>directly from the GitHub API</b> — real data, not estimates.</p>
+    </div>
+    <div class="card q">
+      <h4>Why must clicking an item open a new tab?</h4>
+      <p>So you never lose your place in the app. After researching on GitHub, just return to this tab and keep composing.</p>
+    </div>
+    <div class="card q">
+      <h4>How do I make a popular skill my own?</h4>
+      <p>Use <b>Racik</b> in FORGE to pull it into a draft, then <b>rewrite the content to fit your need</b> — adapt, don't copy-paste.</p>
+    </div>
+    <div class="card q">
+      <h4>Do high stars always mean it's good for me?</h4>
+      <p>Not necessarily. Stars mean popularity, not a fit with your problem. Take the <b>pattern</b>, adapt the content to your context.</p>
+    </div>
+  </div>
+
+  <h2 id="gloss"><span class="n">09</span> Glossary</h2>
+  <div class="card gloss">
+    <p class="term"><b>RADAR</b> <span>— the module that shows popular skills with real GitHub stars.</span></p>
+    <p class="term"><b>Stars (★)</b> <span>— markers of popularity / how many starred the repo on GitHub.</span></p>
+    <p class="term"><b>Repo</b> <span>— a project / code storage place on GitHub.</span></p>
+    <p class="term"><b>REFRESH</b> <span>— the button that re-fetches the latest star counts.</span></p>
+    <p class="term"><b>Racik</b> <span>— the action that turns a public repo into a skill draft in FORGE.</span></p>
+    <p class="term"><b>Pattern</b> <span>— the standard way seen repeated in good skills: structure, parts, language.</span></p>
+  </div>
+
+  <div class="bottom">
+    <a class="cta" href="./">← Back &amp; take a look at RADAR</a>
+  </div>
+  <div class="foot">SKILL//ORBIT · RADAR GUIDE · ASTRORAWAK © GITHUB</div>
+</div>
+</body>
+</html>
