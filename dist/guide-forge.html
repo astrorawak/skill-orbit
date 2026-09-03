@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panduan Lengkap — FORGE · Racik Skill</title>
+<meta name="description" content="Panduan langkah demi langkah meracik skill di FORGE, lengkap dengan contoh use case." />
+<style>
+:root{--bg:#05080f;--panel:#0a1120;--line:#1c3350;--em:#22C55E;--cy:#22d3ee;--txt:#e6edf7;--muted:#8ea3bd;--mono:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(34,197,94,.10),transparent 60%),
+  radial-gradient(900px 500px at 0% 110%,rgba(34,211,238,.07),transparent 55%),
+  var(--bg);color:var(--txt);line-height:1.7;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
+  opacity:.5}
+.wrap{max-width:880px;margin:0 auto;padding:26px 18px 90px}
+a{color:var(--cy);text-decoration:none}
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);letter-spacing:.5px;font-size:14px;color:var(--em)}
+.brand b{color:#fff;font-weight:800}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:30px}
+.back{font-size:13px;border:1px solid var(--line);padding:7px 13px;border-radius:999px;color:var(--txt)}
+.back:hover{border-color:var(--em);color:var(--em)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--em);text-transform:uppercase;margin:0 0 6px}
+h1{font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--em)}
+.lead{color:var(--muted);font-size:16px;max-width:640px;margin:0 0 8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+.meta b{color:var(--em);font-weight:700}
+h2{font-size:20px;margin:52px 0 16px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px}
+h2 .n{font-family:var(--mono);color:var(--em);font-size:13px;border:1px solid var(--em);border-radius:6px;padding:2px 7px}
+.card{background:linear-gradient(180deg,#0c1526,#091020);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:12px 0}
+.step{display:grid;grid-template-columns:52px 1fr;gap:16px;position:relative;padding-bottom:8px}
+.step+.step{margin-top:22px}
+.num{font-family:var(--mono);font-size:26px;font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(34,197,94,.6);line-height:1;text-align:center}
+.step h3{margin:0 0 6px;font-size:17px}
+.step p{margin:0 0 8px;color:#c9d6e8}
+.tip{font-size:13px;color:#9fb3cc;background:rgba(34,211,238,.06);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:8px 12px;margin:6px 0 0}
+.tip b{color:var(--cy);font-weight:700}
+.uc{display:grid;gap:14px}
+.uc .card{border-color:rgba(34,211,238,.3)}
+.uc h4{margin:0 0 4px;font-size:15px;color:var(--cy);font-family:var(--mono)}
+.uc ul{margin:8px 0 0;padding-left:20px;color:#c9d6e8}
+.uc li{margin:5px 0}
+.code{font-family:var(--mono);background:#060b15;border:1px solid var(--line);border-radius:8px;padding:2px 6px;font-size:13px;color:var(--em)}
+.bottom{text-align:center;margin-top:56px}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--em);color:#04110a;font-weight:800;padding:13px 22px;border-radius:10px;font-size:15px;box-shadow:0 10px 30px -10px rgba(34,197,94,.6)}
+.cta:hover{filter:brightness(1.08)}
+.foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:11px;color:#5d7089;letter-spacing:1px}
+@media(max-width:560px){h1{font-size:26px}.step{grid-template-columns:40px 1fr}.num{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="./">✦ SKILL<b>//ORBIT</b></a>
+    <a class="back" href="./">← Kembali ke aplikasi</a>
+  </div>
+
+  <p class="kicker">Panduan Lengkap · Modul 1</p>
+  <h1>FORGE — <em>Racik Skill</em></h1>
+  <p class="lead">FORGE adalah tempat kamu <b>membuat skill</b>: resep kerja / asset digital yang bisa kamu simpan, periksa, dan bawa ke mana-mana. Panduan ini membawamu dari nol sampai punya satu skill pertama yang siap disimpan.</p>
+  <div class="meta">
+    <span>⏱ &larr; 5 menit</span><span>🎯 Level: semua pemula</span><span>🧩 Tanpa login tetap bisa</span>
+  </div>
+
+  <h2><span class="n">01</span> Pahami dulu: apa itu “skill”?</h2>
+  <p>Skill = catatan instruksi + identitas (metadata) dalam satu file bernama <b class="code">SKILL.md</b>. Formatnya standar sehingga aplikasi lain/agent juga bisa membacanya. Di FORGE kamu membentuk file itu lewat form yang mudah — tanpa perlu hafal Markdown rumit.</p>
+
+  <h2><span class="n">02</span> Buka FORGE</h2>
+  <div class="card step">
+    <div class="num">1</div>
+    <div>
+      <h3>Masuk dari Beranda</h3>
+      <p>Buka aplikasi, lalu klik kartu besar <b>“FORGE — Racik skill”</b> (atau tab FORGE di menu atas).</p>
+      <p class="tip"><b>Tips:</b> halaman FORGE punya dua sisi — kiri untuk mengisi/memilih bahan, kanan untuk melihat hasil (pratinjau).</p>
+    </div>
+  </div>
+
+  <h2><span class="n">03</span> Pilih bahan dasar — 3 cara</h2>
+  <div class="card step">
+    <div class="num">2</div>
+    <div>
+      <h3>Cara A — dari GALERI (paling mudah)</h3>
+      <p>Di panel kiri, cari “Galeri”. Klik sebuah pola skill yang menarik lalu tekan <b>“Terapkan”</b>. Isi form langsung terisi sebagai titik mulai, tinggal kamu sesuaikan.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">3</div>
+    <div>
+      <h3>Cara B — dari repo GitHub (pakai “Racik”)</h3>
+      <p>Ketikan kata kunci di <b>Telusur GitHub</b>, lalu klik <b>“Racik”</b> pada hasil yang kamu suka. Skill publik itu ditarik jadi <b>draf</b> yang bisa kamu modifikasi. Meski reponya tak punya SKILL.md, sistem otomatis menyusun draf dari README-nya — jadi tak pernah buntu.</p>
+    </div>
+  </div>
+  <div class="card step">
+    <div class="num">4</div>
+    <div>
+      <h3>Cara C — dari nol (manual)</h3>
+      <p>Kosongkan semua isian lalu ketik sendiri: <b>nama</b>, <b>deskripsi</b> (singkat, ≤60 huruf), <b>tag</b>, <b>penulis</b>, dan <b>versi</b>. Cocok kalau kamu sudah tahu persis resep yang mau ditulis.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">04</span> Tulis isi skill (langkah panduannya)</h2>
+  <div class="card step">
+    <div class="num">5</div>
+    <div>
+      <h3>Isi kolom “langkah” dengan urutan kerja</h3>
+      <p>Tulis instruksi tahap demi tahap yang jelas: <b>mulai dari apa → lakukan apa → selesai bagaimana</b>. Makin runut, makin mudah dibaca ulang (olehmu atau orang lain).</p>
+      <p class="tip"><b>Tips:</b> pecah jadi paling banyak 5 langkah kecil. Setiap langkah satu kalimat bertindak.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">05</span> Cek PRATINJAU</h2>
+  <div class="card step">
+    <div class="num">6</div>
+    <div>
+      <h3>Lihat hasilnya di sisi kanan</h3>
+      <p>Panel <b>PRATINJAU</b> menampilkan file <b class="code">SKILL.md</b> yang akan kamu simpan. Pastikan metadata (nama–deskripsi–versi) rapi dan isinya sudah sesuai. Di atasnya ada keterangan bahwa ini “hasil racikan yang akan disimpan”.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">06</span> SIMPAN</h2>
+  <div class="card step">
+    <div class="num">7</div>
+    <div>
+      <h3>Simpan ke koleksi &amp; cloud</h3>
+      <p>Tekan tombol <b>“SIMPAN”</b>. Skill tersimpan ke <b>ARSIP</b> (koleksi lokal perangkat ini). Bila kamu sudah <b>masuk akun online</b>, simpannya juga bisa disinkronkan ke server agar dapat diambil di perangkat lain.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">07</span> Contoh use case nyata</h2>
+  <div class="uc">
+    <div class="card">
+      <h4>USE CASE 1 · Pembukuan usaha kecil</h4>
+      <p style="margin:0;color:var(--muted)">Sebuah pelaku usaha di Sekadau ingin rekap keuangan warung mingguan tanpa rumit.</p>
+      <ul>
+        <li>Pilih GALERI → pola <b>“rekap-keuangan”</b> → Terapkan.</li>
+        <li>Ganti nama jadi <b class="code">rekap-keuangan-warung</b>, deskripsi “Rekap keuangan & untung-rugi warung otomatis.”</li>
+        <li>Tulis langkah: catat omzet tiap malam → isi kolom pasti → hitung selisih.</li>
+        <li>Pratinjau → rapi → <b>SIMPAN</b>. Kini resepnya selalu siap dipakai.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 2 · Prosedur kerja WiFi</h4>
+      <p style="margin:0;color:var(--muted)">Membuat checklist pemasangan WiFi di pelanggan agar tim konsisten.</p>
+      <ul>
+        <li>Telepon dari nol: nama = <b class="code">checklist-instalasi-wifi</b>.</li>
+        <li>Langkah: survey lokasi → pasang AP → konfigurasi → tes sinyal → catat pelanggan.</li>
+        <li>Simpan. Bisa di-share ke rekan sebagai acuan baku.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>USE CASE 3 · Paket konten harian</h4>
+      <p style="margin:0;color:var(--muted)">Menghasilkan 5 ide konten dari satu topik.</p>
+      <ul>
+        <li>Gunakan “Racik” dari repo publik bertema konten (mis. yang ada di RADAR).</li>
+        <li>Ubah isinya jadi prompt: “Buat 5 ide konten tentang topik X”.</li>
+        <li>Simpan sebagai skill yang bisa dipakai berulang setiap minggu.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <a class="cta" href="./">← Kembali & mulai meracik</a>
+  </div>
+  <div class="foot">SKILL//ORBIT · PANDUAN FORGE · ASTRORAWAK © GITHUB</div>
+</div>
+</body>
+</html>

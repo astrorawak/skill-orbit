@@ -157,6 +157,8 @@ function Tour({ lang, step, setStep, onSkip, onDone, onGo }) {
 function PageHelp({ lang, page, onClose }) {
   const L = lang === "id" ? LID : LEN;
   const items = L.HELP[page] || [];
+  const GUIDE = { forge: "guide-forge.html", radar: "guide-radar.html", arsip: "guide-arsip.html", home: "guide-forge.html" };
+  const h = GUIDE[page] || "guide-forge.html";
   return (
     <div className="tour-mask" onClick={onClose}>
       <div className="tour-card help-card" onClick={(e) => e.stopPropagation()}>
@@ -167,8 +169,8 @@ function PageHelp({ lang, page, onClose }) {
         </ol>
         <p className="help-persist">⟳ {L.helpPersist}</p>
         <div className="tour-actions">
-          <span />
-          <button className="solid ok" onClick={onClose}>{L.helpClose} ✓</button>
+          <button className="ghost sm" onClick={onClose}>{L.helpClose} ✓</button>
+          <a className="solid ok btn-full" href={h} target="_blank" rel="noopener">{L.helpFull}</a>
         </div>
       </div>
     </div>
@@ -213,7 +215,6 @@ function Home({ lang, onGo, onHelp }) {
       <div className="home-hero">
         <h1 className="home-kicker">{lang === "id" ? "GELEMBANG SKILL · PENDULU" : "SKILLS WAVE · PRECURSOR"}</h1>
         <p className="home-note">{L.homeNote}</p>
-        <button className="help-chip" onClick={() => onHelp("home")} title={L.helpBtnT}><Icon d={ICONS.help} size={15} />{L.helpBtn}</button>
       </div>
       <div className="card-grid">
         {cards.map((c) => (
@@ -1003,6 +1004,7 @@ const LID = {
   helpBtnT: "Panduan halaman ini",
   helpTag: "Panduan",
   helpClose: "Mengerti",
+  helpFull: "Buka panduan lengkap (tab baru) ↗",
   helpPersist: "Tombol Panduan (?) selalu ada di pojok header tiap halaman — buka kapan pun.",
   HELP_T: { home: "Beranda", forge: "FORGE · racik skill", radar: "RADAR · tren", arsip: "ARSIP & akun" },
   HELP: {
@@ -1142,6 +1144,7 @@ const LEN = {
   helpBtnT: "This page's guide",
   helpTag: "Guide",
   helpClose: "Got it",
+  helpFull: "Open the full guide (new tab) ↗",
   helpPersist: "The Guide (?) button stays in the corner of each page's header — open it anytime.",
   HELP_T: { home: "Home", forge: "FORGE · compose", radar: "RADAR · trends", arsip: "ARSIP & account" },
   HELP: {
