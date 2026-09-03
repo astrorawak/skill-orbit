@@ -63,6 +63,26 @@ export async function me() {
   return req("/me");
 }
 
+// lupa sandi: minta kode reset. Kembali {reset_token, expires_in} (belum ada SMTP → kode inline).
+export async function forgotPassword(email) {
+  return req("/auth/forgot", { method: "POST", body: JSON.stringify({ email }) });
+}
+// set sandi baru pakai kode; sukses → langsung login (set session).
+export async function resetPassword(email, code, newPassword) {
+  const d = await req("/auth/reset", {
+    method: "POST",
+    body: JSON.stringify({ email, code, new_password: newPassword }),
+  });
+  if (d.token) setSession(d.token, email);
+  return d;
+}
+// hapus akun (skill ikut terhapus) + local session.
+export async function deleteAccount() {
+  const d = await req("/me", { method: "DELETE" });
+  clearSession();
+  return d;
+}
+
 export async function listSkill(token) {
   const d = await req("/skills", token ? { headers: { Authorization: "Bearer " + token } } : {});
   return Array.isArray(d) ? d : [];

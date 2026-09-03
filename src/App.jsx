@@ -3,7 +3,7 @@ import { SKILLS, PATTERNS } from "./data";
 import { BEHAVIORS, TOOL_OPTS, generateSkill, validateDesc } from "./forge";
 import GALLERY from "./gallery";
 import { stashList, stashAdd, stashDel, stashExport, stashImport, parseSkillFile } from "./stash";
-import { getToken, getEmail, setSession, clearSession, register, login, syncUp, syncDown } from "./cloud";
+import { getToken, getEmail, setSession, clearSession, register, login, syncUp, syncDown, forgotPassword, resetPassword, deleteAccount } from "./cloud";
 
 // mapping kategori galeri -> perilaku + alat (dipakai "Compose dari Galeri")
 function galMap(slug) {
@@ -462,6 +462,11 @@ function Arsip({ lang, onOpen }) {
   const [logged, setLogged] = useState(!!getToken());
   const [cldMsg, setCldMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resetMode, setResetMode] = useState(false); // mode "Lupa sandi?"
+  const [gotCode, setGotCode] = useState(false);     // kode sudah keluar
+  const [issuedCode, setIssuedCode] = useState("");  // kode dari server (ditampilkan sekali)
+  const [code, setCode] = useState("");
+  const [newPw, setNewPw] = useState("");
   function flash(m) { setCldMsg(m); setTimeout(() => setCldMsg(""), 2600); }
   async function doRegister(ev) {
     ev.preventDefault();
@@ -480,7 +485,30 @@ function Arsip({ lang, onOpen }) {
     catch (e) { flash(L.cldFail + " " + e.message); }
     setBusy(false);
   }
-  function doLogout() { clearSession(); setLogged(false); setPw(""); flash(L.cldLogout); }
+  function doLogout() { clearSession(); setLogged(false); setPw(""); setResetMode(false); setGotCode(false); setCode(""); setNewPw(""); flash(L.cldLogout); }
+  async function doForgot(ev) {
+    ev.preventDefault();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return flash(L.cldMailBad);
+    setBusy(true);
+    try { const r = await forgotPassword(email.trim().toLowerCase()); setGotCode(true); setIssuedCode(r.reset_token || ""); flash(`${L.cldCodeOk} ${r.reset_token}`); }
+    catch (e) { flash(L.cldFail + " " + e.message); }
+    setBusy(false);
+  }
+  async function doReset(ev) {
+    ev.preventDefault();
+    if (!code || newPw.length < 6) return flash(L.cldPwShort);
+    setBusy(true);
+    try { await resetPassword(email.trim().toLowerCase(), code.trim(), newPw); setResetMode(false); setLogged(true); setNewPw(""); setCode(""); setGotCode(false); flash(L.cldResetOk); }
+    catch (e) { flash(L.cldFail + " " + e.message); }
+    setBusy(false);
+  }
+  async function doDeleteAccount() {
+    if (!window.confirm(L.cldDelConfirm)) return;
+    setBusy(true);
+    try { await deleteAccount(); setLogged(false); setEmail(""); setPw(""); reload(); flash(L.cldDelOk); }
+    catch (e) { flash(L.cldFail + " " + e.message); }
+    setBusy(false);
+  }
   async function doPush() {
     setBusy(true);
     try { const r = await syncUp(items); flash(`${L.cldPushed} ${r.added} · ${L.cldSkipped} ${r.skipped}`); }
@@ -545,16 +573,35 @@ function Arsip({ lang, onOpen }) {
       <p className="local-note">⚠️ {L.arsipLocalNote}</p>
       <div className="cloud-panel">
         {!logged ? (
-          <form className="cloud-form" onSubmit={doLogin}>
-            <span className="cloud-h">☁️ {L.cldTitle}</span>
-            <input className="inp" type="email" placeholder={L.cldMailPh} value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
-            <input className="inp" type="password" placeholder={L.cldPwPh} value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="current-password" />
-            <div className="cloud-row">
-              <button className="ghost sm" type="submit" disabled={busy}>{busy ? "…" : L.cldLogin}</button>
-              <button className="ghost sm accent" type="button" disabled={busy} onClick={doRegister}>{busy ? "…" : L.cldReg}</button>
-            </div>
-            <p className="muted cld-hint">{L.cldHint}</p>
-          </form>
+          <div className="cloud-anon">
+            <form className="cloud-form" onSubmit={doLogin}>
+              <span className="cloud-h">☁️ {L.cldTitle}</span>
+              <input className="inp" type="email" placeholder={L.cldMailPh} value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+              <input className="inp" type="password" placeholder={L.cldPwPh} value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="current-password" />
+              <div className="cloud-row">
+                <button className="ghost sm" type="submit" disabled={busy}>{busy ? "…" : L.cldLogin}</button>
+                <button className="ghost sm accent" type="button" disabled={busy} onClick={doRegister}>{busy ? "…" : L.cldReg}</button>
+              </div>
+              <button type="button" className="cloud-link" onClick={() => { setResetMode(!resetMode); setGotCode(false); setIssuedCode(""); setCode(""); setNewPw(""); }}>
+                {resetMode ? L.cldBackLogin : L.cldForgot}
+              </button>
+            </form>
+            {resetMode && (
+              <form className="cloud-form cloud-reset" onSubmit={gotCode ? doReset : doForgot}>
+                <span className="cloud-h">{L.cldResetH} <em className="cloud-link-note">{L.cldResetNote}</em></span>
+                {!gotCode ? (
+                  <button className="ghost sm accent" type="submit" disabled={busy}>{busy ? "…" : L.cldSendCode}</button>
+                ) : (
+                  <>
+                    <p className="cld-code">{L.cldCodeIs} <b>{issuedCode}</b> <span className="muted">{L.cldCodeTtl}</span></p>
+                    <input className="inp" placeholder={L.cldCodePh} value={code || issuedCode} onChange={(e) => setCode(e.target.value)} />
+                    <input className="inp" type="password" placeholder={L.cldNewPwPh} value={newPw} onChange={(e) => setNewPw(e.target.value)} autoComplete="new-password" />
+                    <button className="ghost sm accent" type="submit" disabled={busy}>{busy ? "…" : L.cldResetting}</button>
+                  </>
+                )}
+              </form>
+            )}
+          </div>
         ) : (
           <div className="cloud-signed">
             <span className="cloud-h">☁️ {L.cldInAs} <b>{getEmail()}</b></span>
@@ -562,6 +609,9 @@ function Arsip({ lang, onOpen }) {
               <button className="ghost sm" disabled={busy} onClick={doPush}>{busy ? "…" : L.cldPush}</button>
               <button className="ghost sm" disabled={busy} onClick={doPull}>{busy ? "…" : L.cldPull}</button>
               <button className="ghost sm danger" onClick={doLogout}>{L.cldLogout}</button>
+            </div>
+            <div className="cloud-row">
+              <button className="ghost sm danger" disabled={busy} onClick={doDeleteAccount}>{busy ? "…" : L.cldDelAccount}</button>
             </div>
             <p className="muted cld-hint">{L.cldSignedHint}</p>
           </div>
@@ -783,6 +833,21 @@ const LID = {
   cldPulled: "Diambil dari cloud:",
   cldSkipped: "sudah ada,",
   cldAdded: "ditambah",
+  cldForgot: "Lupa sandi?",
+  cldBackLogin: "← Kembali ke masuk",
+  cldResetH: "Atur ulang sandi",
+  cldResetNote: "(kode ditampilkan di sini — email otomatis belum dipasang)",
+  cldSendCode: "Kirim kode",
+  cldCodeIs: "Kode kamu:",
+  cldCodeTtl: "(berlaku 15 menit)",
+  cldCodePh: "masukkan kode",
+  cldNewPwPh: "sandi baru (min. 6)",
+  cldResetting: "Setel ulang & masuk",
+  cldCodeOk: "Kode dikirim:",
+  cldResetOk: "Sandi diubah, kamu masuk ✓",
+  cldDelAccount: "Hapus akun",
+  cldDelConfirm: "Hapus akun ini permanen? Seluruh skill di cloud ikut terhapus.",
+  cldDelOk: "Akun dihapus.",
 };
 const LEN = {
   forgeTitle: "FORGE · SKILL COMPOSER",
@@ -851,6 +916,21 @@ const LEN = {
   cldPulled: "Fetched from cloud:",
   cldSkipped: "already there,",
   cldAdded: "added",
+  cldForgot: "Forgot password?",
+  cldBackLogin: "← Back to sign in",
+  cldResetH: "Reset password",
+  cldResetNote: "(code shown here — no auto-email yet)",
+  cldSendCode: "Send code",
+  cldCodeIs: "Your code:",
+  cldCodeTtl: "(valid 15 min)",
+  cldCodePh: "enter code",
+  cldNewPwPh: "new password (min. 6)",
+  cldResetting: "Reset & sign in",
+  cldCodeOk: "Code issued:",
+  cldResetOk: "Password changed, signed in ✓",
+  cldDelAccount: "Delete account",
+  cldDelConfirm: "Delete this account permanently? All cloud skills will be removed.",
+  cldDelOk: "Account deleted.",
 };
 const qPh = "cari nama / repo…";
 const qPhEmpty = "cari nama / repo…";

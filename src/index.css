@@ -241,3 +241,12 @@ a{color:var(--cyan)}
 .ghost.sm.danger:hover{background:rgba(248,113,113,.12)}
 .cld-hint{font-size:11px;opacity:.72;margin:2px 0 0}
 .cloud-signed{display:flex;flex-direction:column;gap:8px}
+
+/* ---- akun online: lupa sandi + hapus akun ---- */
+.cloud-anon{display:flex;flex-direction:column;gap:8px}
+.cloud-reset{border-top:1px dashed #22c55e33;padding-top:8px}
+.cloud-link{background:none;border:0;color:#22c55e;font:inherit;font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
+.cloud-link:hover{color:#4ade80}
+.cloud-link-note{color:#6ee7aa;font-size:11px;font-style:italic;font-weight:400}
+.cld-code{color:#22c55e;font-size:12px;line-height:1.4}
+.cld-code b{font-size:16px;letter-spacing:2px;color:#4ade80}
