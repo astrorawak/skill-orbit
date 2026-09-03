@@ -442,6 +442,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
   const [ghInfo, setGhInfo] = useState("");
   const [loadedFrom, setLoadedFrom] = useState("");
   const [done, setDone] = useState({});
+  const [pvOpen, setPvOpen] = useState(false);
   function focusField(id) {
     const el = document.getElementById(id);
     if (el) {
@@ -714,6 +715,23 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
             </div>
           )}
         </div>
+      </section>
+
+      <section className="panel out">
+        <div className="out-head">
+          <h2 className="pnl-title"><Icon d={ICONS.head} /> {L.composeTitle}</h2>
+          <div className="out-actions">
+            {loadedFrom && <span className="loaded-note">⬒ {L.loaded}({loadedFrom})</span>}
+            <button className="solid" onClick={() => setPvOpen(true)}>⛶ {L.preview}</button>
+          </div>
+        </div>
+
+        {loadedFrom ? (
+          <p className="md-cap">{L.composeSub}</p>
+        ) : (
+          <p className="md-cap empty-compose">{L.emptyCompose}</p>
+        )}
+
         <Field label={L.nLabel} note={L.nNote}>
           <input id="f-name" value={name} onChange={(e) => setName(e.target.value)} spellCheck="false" />
         </Field>
@@ -767,27 +785,35 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
             <span>{L.niche}</span>
           </label>
         </div>
+
+        <button className="ph big prev-cta" onClick={() => setPvOpen(true)}>
+          ⛶ {L.preview}
+        </button>
       </section>
 
-      <section className="panel out">
-        <div className="out-head">
-          <h2 className="pnl-title"><Icon d={ICONS.head} /> {L.preview}</h2>
-          <div className="out-actions">
-            {loadedFrom && <span className="loaded-note">⬒ {L.loaded}({loadedFrom})</span>}
-            <button className="ghost" onClick={copy}>
-              <Icon d={copied ? ICONS.check : ICONS.copy} /> {copied ? "OK" : L.copy}
-            </button>
-            <button className="ghost" onClick={() => saveToStash()}>
-              <Icon d={ICONS.box} /> {saved ? L.saved : L.saveStash}
-            </button>
-            <button className="solid" onClick={dl}>
-              <Icon d={ICONS.dl} /> {L.dl}
-            </button>
+      {pvOpen && (
+        <div className="modal" onClick={() => setPvOpen(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-head">
+              <h2 className="pnl-title"><Icon d={ICONS.head} /> {L.preview}</h2>
+              <div className="out-actions">
+                <button className="ghost" onClick={copy}>
+                  <Icon d={copied ? ICONS.check : ICONS.copy} /> {copied ? "OK" : L.copy}
+                </button>
+                <button className="ghost" onClick={() => saveToStash()}>
+                  <Icon d={ICONS.box} /> {saved ? L.saved : L.saveStash}
+                </button>
+                <button className="solid" onClick={dl}>
+                  <Icon d={ICONS.dl} /> {L.dl}
+                </button>
+                <button className="ghost" onClick={() => setPvOpen(false)}>✕ {L.closeTxt}</button>
+              </div>
+            </div>
+            <div className="modal-cap">{L.previewCap}</div>
+            <pre className="md">{markdown}</pre>
           </div>
         </div>
-        <div className="md-cap">{L.previewCap}</div>
-        <pre className="md">{markdown}</pre>
-      </section>
+      )}
     </div>
   );
 }
@@ -1207,6 +1233,10 @@ const LID = {
   niche: "Tajamkan: tambahkan blok 'jangan dipakai untuk hal di luar lingkup'",
   preview: "PRATINJAU",
   previewCap: "File SKILL.md (mentah) — hasil racikan yang akan kamu simpan.",
+  composeTitle: "MERACIK",
+  emptyCompose: "Pilih & Racik sebuah repo dari panel TELUSUR / GALERI di kiri. Di sinilah kamu meracik — isi kolomnya, lalu tekan Pratinjau untuk melihat hasilnya.",
+  composeSub: "Isi kolom di bawah ini — tiap ketukan langsung tercatat. Tekan Pratinjau untuk melihat file SKILL.md hasil racikanmu.",
+  closeTxt: "Tutup",
   copy: "SALIN",
   dl: "UNDUH",
   saveStash: "SIMPAN",
@@ -1377,6 +1407,10 @@ const LEN = {
   niche: "Sharpen: add 'don't use for' scope block",
   preview: "PREVIEW",
   previewCap: "SKILL.md file (raw) — the recipe you'll save.",
+  composeTitle: "COMPOSE",
+  emptyCompose: "Pick & Compose a repo from the TELUSUR / GALERI panel on the left. This is where you craft — fill the fields, then press Preview to see the result.",
+  composeSub: "Fill the fields below — every keystroke is recorded. Press Preview to see the SKILL.md you've crafted.",
+  closeTxt: "Close",
   copy: "COPY",
   dl: "DOWNLOAD",
   saveStash: "SAVE",
