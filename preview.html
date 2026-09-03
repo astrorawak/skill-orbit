@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SKILL//ORBIT — pratinjau</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+:root{
+  --bg:#05070a;
+  --bg2:#070a0e;
+  --surface:#0a0e14;
+  --card:#0d131a;
+  --border:#16222e;
+  --border2:#1e2f3d;
+  --fg:#e6f0e9;
+  --mute:#7d8b8c;
+  --mute2:#5a6b6e;
+  --accent:#22C55E;
+  --cyan:#5EEAD4;
+  --purple:#E9D5FF;
+  --amber:#FBBF24;
+  --danger:#F87171;
+  --mono:'Fira Code',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:'Share Tech Mono',var(--mono);
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--mono);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+input,textarea{
+  width:100%;
+  background:#05080c;
+  color:var(--fg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:9px 11px;
+  font-family:var(--mono);
+  font-size:13px;
+  transition:border-color .18s;
+}
+input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px rgba(34,197,94,.25)}
+textarea{resize:vertical}
+a{color:var(--cyan)}
+
+.shell{min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:clip}
+
+/* background layers */
+.bg-grid{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    linear-gradient(rgba(34,197,94,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,197,94,.035) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0,black,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0,black,transparent 75%);
+}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:.16}
+.o1{width:420px;height:420px;background:radial-gradient(circle,#22C55E,transparent 70%);top:-140px;right:-80px;animation:drift1 22s ease-in-out infinite}
+.o2{width:360px;height:360px;background:radial-gradient(circle,#0EA5E9,transparent 70%);bottom:-120px;left:-90px;animation:drift2 26s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(-46px,38px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
+
+/* header */
+.top{
+  position:relative;z-index:2;display:flex;align-items:center;gap:20px;
+  padding:14px 22px;border-bottom:1px solid var(--border);
+  background:linear-gradient(#0a0e14,transparent);
+  backdrop-filter:blur(6px);
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);letter-spacing:.08em;font-size:17px;color:var(--fg)}
+.brand-star{color:var(--accent);text-shadow:0 0 12px rgba(34,197,94,.8);font-size:18px}
+.brand-name{white-space:nowrap}
+.accent{color:var(--accent)}
+.tabs{display:flex;gap:4px;margin-left:8px}
+.tab{
+  display:flex;align-items:center;gap:7px;color:var(--mute);
+  background:transparent;border:1px solid transparent;border-radius:8px;padding:8px 14px;
+  font-family:var(--disp);letter-spacing:.06em;transition:.18s;
+}
+.tab:hover{color:var(--fg);border-color:var(--border2)}
+.tab.on{color:var(--accent);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08);box-shadow:inset 0 0 18px rgba(34,197,94,.05)}
+.lang{margin-left:auto;display:flex;gap:4px;align-items:center}
+.lg{background:transparent;border:1px solid var(--border);color:var(--mute);border-radius:6px;padding:5px 10px;font-family:var(--disp)}
+.lg.on{color:var(--accent);border-color:rgba(34,197,94,.5)}
+
+.stage{position:relative;z-index:1;flex:1;padding:22px;max-width:1280px;width:100%;margin:0 auto}
+
+/* panels */
+.forge{display:grid;grid-template-columns:minmax(340px,440px) 1fr;gap:18px;align-items:start}
+.panel{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);border-radius:14px;padding:18px}
+.pnl-title{display:flex;align-items:center;gap:9px;font-family:var(--disp);letter-spacing:.05em;font-size:14px;color:var(--cyan);margin:0 0 14px}
+.pnl-title svg{color:var(--accent)}
+.muted{color:var(--mute)}
+.sub{color:var(--mute);font-size:12.5px;margin:6px 0 0}
+.field{display:block;margin-bottom:12px}
+.flabel{display:block;color:var(--mute);font-size:11px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.fhint{font-size:11px;color:var(--mute2);display:inline-block;margin-top:4px}
+.s.ok{color:var(--accent)}
+.s.bad{color:var(--danger)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.block{margin-top:6px}
+.grp{color:var(--mute);font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--border);color:var(--mute);background:var(--card);border-radius:999px;padding:6px 11px;font-size:11.5px;transition:.16s}
+.chip:hover{color:var(--fg);border-color:var(--border2)}
+.chip.on{color:#04120a;background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px rgba(34,197,94,.55)}
+.toggle{display:flex;align-items:center;gap:9px;color:var(--mute);font-size:12.5px;cursor:pointer}
+.toggle input{width:auto;accent-color:var(--accent)}
+
+/* output */
+.out{position:sticky;top:70px}
+.out-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.out-actions{display:flex;gap:8px}
+.ghost,.solid{display:inline-flex;align-items:center;gap:7px;border-radius:8px;padding:8px 12px;font-family:var(--disp);letter-spacing:.04em;font-size:12.5px;transition:.16s}
+.ghost{border:1px solid var(--border2);color:var(--mute);background:transparent}
+.ghost:hover{color:var(--fg);border-color:var(--accent)}
+.solid{border:1px solid var(--accent);color:#04120a;background:var(--accent);font-weight:600}
+.solid:hover{box-shadow:0 0 16px rgba(34,197,94,.5)}
+.solid.ok{background:#16a34a}
+.md{
+  margin:14px 0 0;background:#04070b;border:1px solid var(--border);border-radius:12px;
+  padding:16px;font-family:var(--mono);font-size:12px;line-height:1.6;white-space:pre-wrap;
+  word-break:break-word;max-height:74vh;overflow:auto;
+}
+.md::-webkit-scrollbar{width:8px;height:8px}
+.md::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* radar */
+.radar-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.radar-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:8px;background:#05080c;border:1px solid var(--border);border-radius:8px;padding:0 11px}
+.search svg{color:var(--mute)}
+.search input{border:none;background:transparent;box-shadow:none;padding:9px 0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--mute);font-size:12px;margin-bottom:16px}
+.legend-item{display:inline-flex;align-items:center;gap:6px}
+.legend-item em{color:var(--mute2);font-style:normal}
+.dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+
+.table-wrap{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,var(--surface),var(--bg2))}
+.table{width:100%;border-collapse:collapse;font-size:12.5px}
+.table thead{color:var(--mute2);text-transform:uppercase;font-size:11px;letter-spacing:.06em}
+.table thead th{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);background:#060a10;white-space:nowrap}
+.table tbody td{padding:13px 14px;border-bottom:1px solid #0d1520;vertical-align:middle}
+.table tbody tr:last-child td{border-bottom:none}
+.table tbody tr{transition:.15s}
+.table tbody tr:hover{background:rgba(34,197,94,.05)}
+.table .r{text-align:right}
+.repo a{color:var(--fg);text-decoration:none;font-weight:500}
+.repo a:hover{color:var(--accent)}
+.bar{height:5px;background:#0a141c;border-radius:3px;margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;box-shadow:0 0 10px rgba(34,197,94,.5);animation:grow .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{width:0}}
+.stars{color:var(--accent);font-weight:600}
+.note{color:var(--mute);max-width:340px}
+.tag{border:1px solid currentColor;border-radius:999px;padding:2px 9px;font-size:11px;white-space:nowrap}
+.empty{color:var(--mute2);text-align:center;padding:22px}
+.data-note{color:var(--mute2);font-size:11.5px;margin-top:10px}
+
+.foot{position:relative;z-index:1;display:flex;align-items:center;gap:8px;justify-content:flex-end;padding:10px 22px;border-top:1px solid var(--border);color:var(--mute2);font-size:11.5px}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pp 1.6s ease-in-out infinite}
+@keyframes pp{0%,100%{opacity:.3}50%{opacity:1}}
+
+@media (max-width:900px){
+  .forge{grid-template-columns:1fr}
+  .out{position:static}
+  .top{flex-wrap:wrap}
+  .lang{margin-left:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  .orb,.pulse-dot,.bar i{animation:none}
+  *{transition:none!important}
+}
+
+  /* pratinjau khusus: tampilkan dua tab bersusun */
+  .stage{display:block}
+  .group2{display:grid;grid-template-columns:440px 1fr;gap:18px;align-items:start;margin-top:26px}
+  body.scrollable{overflow:auto;height:auto}
+  .preview-banner{border:1px dashed var(--accent);color:var(--accent);text-align:center;padding:8px 12px;border-radius:8px;font-size:12px;margin-bottom:18px;letter-spacing:.04em}
+  @media(max-width:900px){.group2{grid-template-columns:1fr}}
+</style></head>
+<body class="scrollable"><div class="shell">
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="orb o1" aria-hidden="true"></div><div class="orb o2" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="brand"><span class="brand-star">✦</span><span class="brand-name">SKILL<span class="accent">//</span>ORBIT</span></div>
+  <nav class="tabs">
+    <button class="tab on"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8-3a8 8 0 0 1-.2 1.8l2 1.5-2 3.5-2.4-1a8 8 0 0 1-3 1.7L13.9 21h-3.8l-.5-2.5a8 8 0 0 1-3-1.7l-2.4 1-2-3.5 2-1.5A8 8 0 0 1 4 12a8 8 0 0 1 .2-1.8l-2-1.5 2-3.5 2.4 1a8 8 0 0 1 3-1.7L10.1 3h3.8l.5 2.5a8 8 0 0 1 3 1.7l2.4-1 2 3.5-2 1.5c.1.6.2 1.2.2 1.8Z"/></svg> FORGE</button>
+    <button class="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9M12 12l4-4M12 7a5 5 0 0 0-5 5"/></svg> RADAR</button>
+  </nav>
+  <div class="lang"><button class="lg on">ID</button><button class="lg">EN</button></div>
+</header>
+
+<main class="stage">
+  <div class="preview-banner">PRATINJAU STATIS — aplikasi interaktifnya berjalan di localhost:5199</div>
+
+  <section class="panel"> <h2 class="pnl-title"><span style="color:var(--accent)">◆</span> FORGE · PERACIK SKILL</h2>
+    <div class="out"><div class="out-head"><h3 class="pnl-title" style="color:var(--cyan)">PRATINJAU</h3>
+      <div class="out-actions"><button class="ghost">SALIN</button><button class="solid">UNDUH</button></div></div>
+      <pre class="md">---
+name: rekap-keuangan-ternak
+description: Rekap keuangan dan untung-rugi usaha ternak otomatis.
+version: 0.1.0
+author: Karman (karman-astro), Hermes Agent
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [Agro, Ternak, Keuangan, Otomasi]
+    related_skills: []
+---
+
+# rekap-keuangan-ternak Skill
+
+Deskripsi singkat: apa yang skill ini lakukan, apa yang tidak, dan bagaimana ia mandiri. Tanpa basa-basi.
+
+## When to Use
+- Satu perilaku tajam, bukan banyak fitur
+- Setiap langkah berakhir dengan hasil yang bisa dicek
+
+
+## Prerequisites
+- Sebutkan env/API-key/instalasi yang dibutuhkan, bila ada.
+
+## How to Run
+- Panggil melalui tool `terminal` / perintah utama nama-perintah utama
+
+## Procedure
+1. Langkah pertama dengan kriteria selesai.
+2. Langkah berikutnya.
+3. Cek hasil akhir terhadap kriteria.
+
+## Pitfalls
+- Keterbatasan yang diketahui / hal yang tampak rusak tapi bukan bug.
+
+## Verification
+- Cara membuktikan skill benar-benar bekerja (hasil riil, bukan narasi).</pre></div>
+  </section>
+
+  <section class="panel" style="margin-top:26px"> <h2 class="pnl-title"><span style="color:var(--accent)">◉</span> RADAR — trending agent skills <span class="muted">(bintang live dari GitHub API di versi interaktif)</span></h2>
+    <div class="legend"><span class="legend-item"><span class="dot" style="background:#22C55E"></span>Tajam: <em>Satu gagasan/perilaku yang fokus, bukan banyak fitur.</em></span><span class="legend-item"><span class="dot" style="background:#5EEAD4"></span>Terukur: <em>Angka nyata: hemat berapa, cepat berapa. Bukan klaim.</em></span><span class="legend-item"><span class="dot" style="background:#E9D5FF"></span>Cerita: <em>Konteks asli pengarang → orang percaya & ikut share.</em></span><span class="legend-item"><span class="dot" style="background:#FBBF24"></span>Kurasi: <em>Memilah kebisingan: daftar pilihan yang benar.</em></span><span class="legend-item"><span class="dot" style="background:#94A3B8"></span>Resmi: <em>Dari sumber resmi → jadi standar default.</em></span></div>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>#</th><th>Repo</th><th class="r">★ stars</th><th class="r">⭑ forks</th><th>Pola</th><th>Catatan</th></tr></thead>
+      <tbody><tr>
+    <td class="muted">01</td>
+    <td><div class="repo"><a href="https://github.com/mattpocock/skills" target="_blank">mattpocock/skills</a><div class="bar"><i style="width:100%;background:#22C55E"></i></div></div></td>
+    <td class="r stars">246,289</td>
+    <td class="r muted">20,902</td>
+    <td><span class="tag" style="color:#22C55E">Terukur</span></td>
+    <td class="note">Kualitas tertinggi + jarang dipaksa. Pola: bagus, terbukti, didistribusikan.</td>
+  </tr><tr>
+    <td class="muted">02</td>
+    <td><div class="repo"><a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills</a><div class="bar"><i style="width:70.42052223201199%;background:#5EEAD4"></i></div></div></td>
+    <td class="r stars">173,438</td>
+    <td class="r muted">20,591</td>
+    <td><span class="tag" style="color:#5EEAD4">Resmi</span></td>
+    <td class="note">Repositori resmi = sumber asal standar format skill. Distribution raksasa.</td>
+  </tr><tr>
+    <td class="muted">03</td>
+    <td><div class="repo"><a href="https://github.com/github/spec-kit" target="_blank">github/spec-kit</a><div class="bar"><i style="width:54.098234188290995%;background:#22C55E"></i></div></div></td>
+    <td class="r stars">133,238</td>
+    <td class="r muted">11,987</td>
+    <td><span class="tag" style="color:#22C55E">Tajam</span></td>
+    <td class="note">Satu gagasan tajam (spec-lu, agent-eksekusi). Efek: workflow berubah drastis.</td>
+  </tr><tr>
+    <td class="muted">04</td>
+    <td><div class="repo"><a href="https://github.com/JuliusBrussee/caveman" target="_blank">JuliusBrussee/caveman</a><div class="bar"><i style="width:41.781403148333865%;background:#5EEAD4"></i></div></div></td>
+    <td class="r stars">102,903</td>
+    <td class="r muted">5,984</td>
+    <td><span class="tag" style="color:#5EEAD4">Terukur</span></td>
+    <td class="note">Satu perilaku × angka terukur (65% hemat) × cerita. Formula viral.</td>
+  </tr><tr>
+    <td class="muted">05</td>
+    <td><div class="repo"><a href="https://github.com/blader/humanizer" target="_blank">blader/humanizer</a><div class="bar"><i style="width:16.67999788865926%;background:#22C55E"></i></div></div></td>
+    <td class="r stars">41,081</td>
+    <td class="r muted">3,531</td>
+    <td><span class="tag" style="color:#22C55E">Cerita</span></td>
+    <td class="note">Satu rasa sakit nyata (tulisan terjawab 'AI banget') → satu perbaikan.</td>
+  </tr><tr>
+    <td class="muted">06</td>
+    <td><div class="repo"><a href="https://github.com/Gitlawb/openclaude" target="_blank">Gitlawb/openclaude</a><div class="bar"><i style="width:13.076507680001951%;background:#5EEAD4"></i></div></div></td>
+    <td class="r stars">32,206</td>
+    <td class="r muted">9,009</td>
+    <td><span class="tag" style="color:#5EEAD4">Cerita</span></td>
+    <td class="note">Janji pendek yang gampang menginfeksi: jalan di mana saja.</td>
+  </tr><tr>
+    <td class="muted">07</td>
+    <td><div class="repo"><a href="https://github.com/VoltAgent/awesome-agent-skills" target="_blank">VoltAgent/awesome-agent-skills</a><div class="bar"><i style="width:13.67742773733297%;background:#22C55E"></i></div></div></td>
+    <td class="r stars">33,686</td>
+    <td class="r muted">3,560</td>
+    <td><span class="tag" style="color:#22C55E">Kurasi</span></td>
+    <td class="note">Ini '1000 agent' yang kamu maksud — daftar kurasi terbesar.</td>
+  </tr><tr>
+    <td class="muted">08</td>
+    <td><div class="repo"><a href="https://github.com/heilcheng/awesome-agent-skills" target="_blank">heilcheng/awesome-agent-skills</a><div class="bar"><i style="width:2.5039689145678454%;background:#5EEAD4"></i></div></div></td>
+    <td class="r stars">6,167</td>
+    <td class="r muted">665</td>
+    <td><span class="tag" style="color:#5EEAD4">Kurasi</span></td>
+    <td class="note">Anti kebisingan: lebih kecil tapi lebih pilih-pilih.</td>
+  </tr></tbody></table></div>
+    <p class="data-note">Snapshot: 2026-09-02/03 via GitHub REST API. Pola = label editorial (analisa formula viral), bukan metrik resmi.</p>
+  </section>
+</main>
+
+<footer class="foot"><span>SKILL//ORBIT — pendahulu untuk gelombang skills.</span><span class="pulse-dot"></span><span>live</span></footer>
+</div></body></html>
