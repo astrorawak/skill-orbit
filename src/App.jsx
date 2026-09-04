@@ -617,6 +617,22 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
   const toggle = (arr, setArr, id) =>
     setArr(arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id]);
 
+  // ============ CEK KELAYAKAN SKILL.md ============
+  const [lint, setLint] = useState(null);
+  function runLint() {
+    const rows = [];
+    const ok = (l) => rows.push({ level: "ok", label: l });
+    const fix = (l) => rows.push({ level: "fix", label: l });
+    const ds = (desc || "").trim();
+    if ((name || "").trim()) ok(L.lintNameOk); else fix(L.lintName);
+    if (ds) ok(L.lintDescOk); else fix(L.lintDesc);
+    if (ds.length >= 4 && ds.length <= 80) ok(L.lintDescLenOk); else fix(L.lintDescLen);
+    if (/^---\s*\n/.test(markdown)) ok(L.lintFrontOk); else fix(L.lintFront);
+    if (/name\s*:/.test(markdown) && /description\s*:/.test(markdown)) ok(L.lintHeadOk); else fix(L.lintHead);
+    if (/^\s*##\s+/.test(markdown)) ok(L.lintBodyOk); else fix(L.lintBody);
+    setLint({ rows, pass: rows.every((r) => r.level === "ok") });
+  }
+
   return (
     <div className="forge">
       <section className="panel inputs">
@@ -882,6 +898,31 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
               </div>
             </div>
             <div className="modal-cap">{L.previewCap}</div>
+            <div className="lm-actions">
+              <button className="ghost sm" onClick={runLint}>
+                <Icon d={ICONS.check} size={13} /> {L.lintBtn}
+              </button>
+            </div>
+            {lint && (
+              <div className={"lint-box " + (lint.pass ? "ok" : "bad")}>
+                <div className="lint-head">{lint.pass ? "✓ " + L.lintPass : "⚠ " + L.lintFix}</div>
+                <ul className="lint-list">
+                  {lint.rows.map((r, i) => (
+                    <li key={i} className={r.level}>{r.level === "ok" ? "✓ " : "✗ "}{r.label}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="lastmile">
+              <div className="lastmile-head"><b>{L.lastMileTitle}</b></div>
+              <ol>
+                <li>{L.lm1}</li>
+                <li>{L.lm2}</li>
+                <li>{L.lm3}</li>
+                <li>{L.lm4}</li>
+              </ol>
+              <p className="muted lastmile-mute">🔒 {L.lm0}</p>
+            </div>
             <pre className="md">{markdown}</pre>
           </div>
         </div>
@@ -1351,6 +1392,27 @@ const LID = {
   impBad: "⚠️ File bukan SKILL.md yang dikenali.",
   emptyCompose: "Pilih & Racik sebuah repo dari panel TELUSUR / GALERI di kiri. Di sinilah kamu meracik — isi kolomnya, lalu tekan Pratinjau untuk melihat hasilnya.",
   composeSub: "Isi kolom di bawah ini — tiap ketukan langsung tercatat. Tekan Pratinjau untuk melihat file SKILL.md hasil racikanmu.",
+  lintBtn: "Cek kelayakan",
+  lintPass: "Siap dipakai — file ini layak jadi skill.",
+  lintFix: "Masih ada yang perlu dibenahi sebelum dipakai.",
+  lintName: "Nama skill masih kosong.",
+  lintNameOk: "Nama skill sudah ada.",
+  lintDesc: "Deskripsi (1 kalimat) masih kosong.",
+  lintDescOk: "Deskripsi sudah ada.",
+  lintDescLen: "Deskripsi idealnya 4–80 karakter agar mudah terbaca & bisa dipicu.",
+  lintDescLenOk: "Panjang deskripsi wajar.",
+  lintFront: "Frontmatter (blok ---) belum terbentuk sempurna.",
+  lintFrontOk: "Frontmatter (blok ---) terbentuk.",
+  lintHead: "name: dan description: belum keduanya tercantum di frontmatter.",
+  lintHeadOk: "name: & description: tercantum di frontmatter.",
+  lintBody: "Body belum punya arahan (## Usage / ## Description).",
+  lintBodyOk: "Body berisi arahan (## …).",
+  lastMileTitle: "Setelah disimpan — cara memakainya di asisten AI",
+  lm1: "Unduh / salin file .SKILL.md hasil racikanmu.",
+  lm2: "Taruh di folder skill asistenmu — contoh: Hermes → folder 'skills/', Claude Code → '.claude/skills/' (buat folder bila belum ada).",
+  lm3: "Muat ulang daftar skill (mis. mulai ulang sesi asisten).",
+  lm4: "Sebut skill itu dalam percakapan — asisten membaca file ini & mengikuti arahanmu.",
+  lm0: "Tanpa login cloud, drafmu tetap aman tersimpan di perangkat ini — akun online hanya opsional untuk sinkron lintas perangkat.",
   closeTxt: "Tutup",
   copy: "SALIN",
   dl: "UNDUH",
@@ -1539,6 +1601,27 @@ const LEN = {
   impBad: "⚠️ File isn't a recognized SKILL.md.",
   emptyCompose: "Pick & Compose a repo from the TELUSUR / GALERI panel on the left. This is where you craft — fill the fields, then press Preview to see the result.",
   composeSub: "Fill the fields below — every keystroke is recorded. Press Preview to see the SKILL.md you've crafted.",
+  lintBtn: "Check readiness",
+  lintPass: "Ready to use — this file is a usable skill.",
+  lintFix: "A few things still need fixing before use.",
+  lintName: "Skill name is empty.",
+  lintNameOk: "Skill name is set.",
+  lintDesc: "Description (one line) is empty.",
+  lintDescOk: "Description is set.",
+  lintDescLen: "Description should be ~4–80 chars to be readable & triggerable.",
+  lintDescLenOk: "Description length is reasonable.",
+  lintFront: "Frontmatter (--- block) isn't formed properly.",
+  lintFrontOk: "Frontmatter (--- block) is formed.",
+  lintHead: "Both name: and description: are missing from frontmatter.",
+  lintHeadOk: "name: & description: present in frontmatter.",
+  lintBody: "Body has no guidance (## Usage / ## Description).",
+  lintBodyOk: "Body has guidance (## …).",
+  lastMileTitle: "After saving — how to make your AI assistant actually use it",
+  lm1: "Download / copy the .SKILL.md file you made.",
+  lm2: "Drop it into your assistant's skills folder — e.g. Hermes → 'skills/', Claude Code → '.claude/skills/' (create the folder if missing).",
+  lm3: "Reload the skill list (e.g. restart the assistant session).",
+  lm4: "Mention that skill in a chat — the assistant reads this file and follows your guidance.",
+  lm0: "Without cloud login your draft stays safely on this device — the online account is optional, only for syncing across devices.",
   closeTxt: "Close",
   copy: "COPY",
   dl: "DOWNLOAD",
