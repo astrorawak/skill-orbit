@@ -650,6 +650,25 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     setLint({ rows, pass: rows.every((r) => r.level === "ok") });
   }
 
+  // ==== UJI (struktur + simulasi cara kerja) ====
+  const [tst, setTst] = useState(null);
+  function runTest() {
+    const rows = [];
+    const ok = (l) => rows.push({ level: "ok", label: l });
+    const fix = (l) => rows.push({ level: "fix", label: l });
+    const nm = (name || "").trim();
+    const ds = (desc || "").trim();
+    const md = markdown || "";
+    if (nm) ok(L.testNameOk); else fix(L.testName);
+    if (ds && ds.length <= 80) ok(L.testDescOk); else fix(L.testDesc);
+    if (/^\s*##\s+/.test(md) && /(^\s*(?:-|\d[\.\)])|Langkah|Steps)/m.test(md)) ok(L.testActionsOk); else fix(L.testActions);
+    if (/name\s*:/.test(md) && /description\s*:/.test(md)) ok(L.testFrontOk); else fix(L.testFront);
+    if (tools && tools.length) ok(L.testToolsOk); else fix(L.testTools);
+    const tpl = TEMPLATES.find((t) => (lang === "id" ? t.nameId : t.nameEn) === nm);
+    const ex = tpl && tpl.ex ? tpl.ex[lang] : { u: L.testGUser.replace("{n}", nm), a: L.testGAsist, o: L.testGOut };
+    setTst({ rows, pass: rows.every((r) => r.level === "ok"), ex });
+  }
+
   return (
     <div className="forge">
       <section className="panel inputs">
@@ -935,6 +954,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
               <button className="ghost sm" onClick={runLint}>
                 <Icon d={ICONS.check} size={13} /> {L.lintBtn}
               </button>
+              <button className="ghost sm" onClick={runTest}>▶ {L.testBtn}</button>
             </div>
             {lint && (
               <div className={"lint-box " + (lint.pass ? "ok" : "bad")}>
@@ -944,6 +964,23 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
                     <li key={i} className={r.level}>{r.level === "ok" ? "✓ " : "✗ "}{r.label}</li>
                   ))}
                 </ul>
+              </div>
+            )}
+            {tst && (
+              <div className={"intbox sim-box " + (tst.pass ? "ok" : "bad")}>
+                <div className="sim-head">{tst.pass ? "✓ " + L.testPass : "⚠ " + L.testFix}</div>
+                <ul className="lint-list">
+                  {tst.rows.map((r, i) => (
+                    <li key={i} className={r.level}>{r.level === "ok" ? "✓ " : "✗ "}{r.label}</li>
+                  ))}
+                </ul>
+                <div className="sim-ex">
+                  <div className="sim-title">{L.testSimTitle}</div>
+                  <div className="sim-row"><b>{L.testUser}</b><span className="muted">{tst.ex.u}</span></div>
+                  <div className="sim-row"><b>{L.testAsist}</b><span className="muted">{tst.ex.a}</span></div>
+                  <div className="sim-row out"><b>{L.testOut}</b><span>{tst.ex.o}</span></div>
+                </div>
+                <p className="muted sim-foot">{L.testFoot}</p>
               </div>
             )}
             <div className="lastmile">
@@ -1428,6 +1465,27 @@ const LID = {
   tl: "Template lokal (siap pakai)",
   tlTag: "Kurasi kami, bukan repo. Klik → form terisi otomatis; tinggal sesuaikan & simpan.",
   tlApply: "Terapkan",
+  testBtn: "Uji",
+  testPass: "Teruji — siap dipakai.",
+  testFix: "Perlu dibenahi sebelum dipakai.",
+  testName: "Nama skill kosong.",
+  testNameOk: "Nama skill sudah ada.",
+  testDesc: "Deskripsi kosong / terlalu panjang (>80)",
+  testDescOk: "Deskripsi pas sebagai pemicu (≤80)",
+  testActions: "Body tidak punya langkah kerja yang bisa dijalankan.",
+  testActionsOk: "Body punya arahan kerja (## + langkah).",
+  testFront: "Frontmatter name:/description: belum utuh.",
+  testFrontOk: "Frontmatter utuh (name:/description:).",
+  testTools: "Belum ada alat dipilih.",
+  testToolsOk: "Alat terpilih (cara asisten bekerja).",
+  testSimTitle: "Contoh cara kerja (simulasi)",
+  testUser: "Pemicu user:",
+  testAsist: "Yang dilakukan asisten:",
+  testOut: "Contoh hasil:",
+  testGUser: "Uji contoh: 'jalankan skill {n} sesuai deskripsinya, lalu tunjukkan hasilnya'",
+  testGAsist: "Asisten membuka SKILL.md ini → baca name/description (pemicu) & arahan ## → jalankan dengan alat terpilih → beri hasil.",
+  testGOut: "Asisten menjalankan langkah skill & menampilkan ringkasan sesuai arahanmu.",
+  testFoot: "Uji = cek struktur + simulasi cara kerja. Bukti final ada saat skill benar-benar dipakai asistenmu (lihat 'Setelah disimpan').",
   lintBtn: "Cek kelayakan",
   lintPass: "Siap dipakai — file ini layak jadi skill.",
   lintFix: "Masih ada yang perlu dibenahi sebelum dipakai.",
@@ -1640,6 +1698,27 @@ const LEN = {
   tl: "Local ready-to-use templates",
   tlTag: "Our curation, not a repo. One click fills the form — just tweak & save.",
   tlApply: "Apply",
+  testBtn: "Test",
+  testPass: "Tested — ready to use.",
+  testFix: "Needs fixes before use.",
+  testName: "Skill name is empty.",
+  testNameOk: "Skill name is set.",
+  testDesc: "Description empty / too long (>80)",
+  testDescOk: "Description works as a trigger (≤80)",
+  testActions: "Body has no runnable steps.",
+  testActionsOk: "Body has working guidance (## + steps).",
+  testFront: "Frontmatter name:/description: incomplete.",
+  testFrontOk: "Frontmatter complete (name:/description:).",
+  testTools: "No tool selected.",
+  testToolsOk: "Tool(s) selected (how the assistant works).",
+  testSimTitle: "How it would work (simulation)",
+  testUser: "User trigger:",
+  testAsist: "Assistant then:",
+  testOut: "Sample output:",
+  testGUser: "Test sample: 'run skill {n} per its description, then show the result'",
+  testGAsist: "Assistant opens this SKILL.md → reads name/description (trigger) & ## guidance → runs with selected tool → gives a result.",
+  testGOut: "Assistant runs the skill steps and shows a summary per your guidance.",
+  testFoot: "Test = structure check + how-it-works simulation. Final proof happens when you actually use it in your assistant (see 'After saving').",
   lintBtn: "Check readiness",
   lintPass: "Ready to use — this file is a usable skill.",
   lintFix: "A few things still need fixing before use.",
