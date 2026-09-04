@@ -1,0 +1,63 @@
+// ==== SKILL//ORBIT — TEMPLATE LOKAL (kurasi kami) ====
+// Perbedaan dari GALERI: item ini BUKAN repo GitHub publik tapi template
+// siap-pakai/tu[njuan yang kami tulis. Dilabeli jujur "bukan repo" di UI.
+// Field merujuk ke builder SKILL.md Forge (name/desc/tags/tools/behaviors/niche/summary).
+const TEMPLATES = [
+  {
+    slug: "rekap-keuangan-ternak",
+    cat: "Agro · Ternak",
+    nameId: "rekap-keuangan-ternak",
+    nameEn: "livestock-bookkeeping",
+    descId: "Rekap keuangan & untung-rugi usaha ternak otomatis dari catatan jual/beli.",
+    descEn: "Auto bookkeeping & P&L for a livestock venture from sales/purchases.",
+    tags: "Agro, Ternak, Keuangan, Otomasi",
+    tools: ["files", "execute"],
+    behaviors: ["tajam", "terukur"],
+    niche: true,
+    summaryId: "Setiap jual atau beli (bibit/pakan/hasil panen) dicatat lewat file; asisten merangkum saldo, untung-rugi, dan stok dalam rekap yang rapi.",
+    summaryEn: "Record each sale or purchase (stock/feed/harvest) in a file; the assistant keeps a clear ledger of balance, P&L, and stock.",
+  },
+  {
+    slug: "catat-stok-toko-umkm",
+    cat: "UMKM · Toko",
+    nameId: "catat-stok-toko-umkm",
+    nameEn: "umkm-shop-stock",
+    descId: "Catat stok & penjualan kios/warung, dapat tanda barang hampir habis.",
+    descEn: "Track kiosk/warung stock & sales, alert when items run low.",
+    tags: "UMKM, Toko, Stok, Otomasi",
+    tools: ["files"],
+    behaviors: ["tajam", "terukur"],
+    niche: true,
+    summaryId: "Pengganti buku catatan: tiap barang masuk/keluar dicatat; asisten menyusun sisa stok, nilai, dan barang yang hampir habis.",
+    summaryEn: "A better paper ledger: log each item in/out; the assistant tracks remaining stock, value, and soon-to-run-out items.",
+  },
+  {
+    slug: "pantau-harga-produk",
+    cat: "UMKM · Riset Harga",
+    nameId: "pantau-harga-produk",
+    nameEn: "price-watch",
+    descId: "Pantau & bandingkan harga produk (mis. TBS, kebutuhan) terhadap target.",
+    descEn: "Track & compare product prices (e.g. TBS, essentials) against a target.",
+    tags: "Riset, Harga, Pasar, Pantauan",
+    tools: ["files", "execute"],
+    behaviors: ["terukur"],
+    niche: true,
+    summaryId: "Simpan harga terbaru di file; asisten membandingkan dengan target, menandai peluang atau risiko, lalu membuat ringkasan tren sederhana.",
+    summaryEn: "Store latest prices in a file; the assistant compares to a target, flags opportunity or risk, then builds a simple trend summary.",
+  },
+  {
+    slug: "laporan-kreator-desa",
+    cat: "Konten · Creator",
+    nameId: "laporan-kreator-desa",
+    nameEn: "village-creator-digest",
+    descId: "Ringkas bahan & jadwal konten mingguan kreator jadi rencana terarah.",
+    descEn: "Turn a creator's weekly notes into a clear, focused content plan.",
+    tags: "Konten, Kreator, Perencanaan",
+    tools: ["files"],
+    behaviors: ["terukur"],
+    niche: false,
+    summaryId: "Tumpuk ide/bahan ke file; asisten menyusun jadwal, topik, dan target rilis mingguan yang rapi serta ringkasannya.",
+    summaryEn: "Drop ideas/notes into a file; the assistant builds a tidy weekly schedule, topics, release targets, and a recap.",
+  },
+];
+export default TEMPLATES;

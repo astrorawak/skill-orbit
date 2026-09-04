@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { SKILLS, PATTERNS } from "./data";
 import { BEHAVIORS, TOOL_OPTS, generateSkill, validateDesc } from "./forge";
 import GALLERY from "./gallery";
+import TEMPLATES from "./templates-lokal";
 import { stashList, stashAdd, stashDel, stashUp, stashExport, stashImport, parseSkillFile } from "./stash";
 import { getToken, getEmail, setSession, clearSession, register, login, syncUp, syncDown, forgotPassword, resetPassword, deleteAccount } from "./cloud";
 
@@ -321,6 +322,22 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     stashAdd({ name, desc, md: markdown, lang, src });
     setSaved(true);
     setTab("arsip");
+  }
+
+  // ==== Terapkan template lokal (kurasi kami, bukan repo) ====
+  function applyTemplate(t) {
+    const id = lang === "id";
+    setName(id ? t.nameId : t.nameEn);
+    setDesc(id ? t.descId : t.descEn);
+    setTags(t.tags);
+    setTools(t.tools);
+    setBehaviors(t.behaviors);
+    setNiche(!!t.niche);
+    setSummary(id ? t.summaryId : t.summaryEn);
+    setRelated("");
+    setSrc("local-template");
+    setSaved(false);
+    setCopied(false);
   }
 
   // ===== telusur GitHub → tarik SKILL.md publik =====
@@ -670,6 +687,22 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
             ))}
           </div>
         )}
+        <div className="block tl">
+          <div className="gal-head">
+            <span className="grp tl-grp">✦ {L.tl}</span>
+            <span className="gal-ctl"><span className="muted tl-tag">{L.tlTag}</span></span>
+          </div>
+          <div className="gal-grid">
+            {TEMPLATES.map((t) => (
+              <button key={t.slug} className="g-card tl-card" onClick={() => applyTemplate(t)}>
+                <span className="g-name">{lang === "id" ? t.nameId : t.nameEn}</span>
+                <span className="g-cat">{t.cat}</span>
+                <span className="g-desc">{lang === "id" ? t.descId : t.descEn}</span>
+                <span className="tl-cta">{L.tlApply} →</span>
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="block gal">
           <div className="gal-head">
             <span className="grp">{L.gal}</span>
@@ -1392,6 +1425,9 @@ const LID = {
   impBad: "⚠️ File bukan SKILL.md yang dikenali.",
   emptyCompose: "Pilih & Racik sebuah repo dari panel TELUSUR / GALERI di kiri. Di sinilah kamu meracik — isi kolomnya, lalu tekan Pratinjau untuk melihat hasilnya.",
   composeSub: "Isi kolom di bawah ini — tiap ketukan langsung tercatat. Tekan Pratinjau untuk melihat file SKILL.md hasil racikanmu.",
+  tl: "Template lokal (siap pakai)",
+  tlTag: "Kurasi kami, bukan repo. Klik → form terisi otomatis; tinggal sesuaikan & simpan.",
+  tlApply: "Terapkan",
   lintBtn: "Cek kelayakan",
   lintPass: "Siap dipakai — file ini layak jadi skill.",
   lintFix: "Masih ada yang perlu dibenahi sebelum dipakai.",
@@ -1601,6 +1637,9 @@ const LEN = {
   impBad: "⚠️ File isn't a recognized SKILL.md.",
   emptyCompose: "Pick & Compose a repo from the TELUSUR / GALERI panel on the left. This is where you craft — fill the fields, then press Preview to see the result.",
   composeSub: "Fill the fields below — every keystroke is recorded. Press Preview to see the SKILL.md you've crafted.",
+  tl: "Local ready-to-use templates",
+  tlTag: "Our curation, not a repo. One click fills the form — just tweak & save.",
+  tlApply: "Apply",
   lintBtn: "Check readiness",
   lintPass: "Ready to use — this file is a usable skill.",
   lintFix: "A few things still need fixing before use.",
