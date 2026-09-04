@@ -188,6 +188,18 @@ a{color:var(--cyan)}
   .gal-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 }
 
+/* HP sempit: tumpuk baris input & rapatkan ruang */
+@media (max-width:520px){
+  .stage{padding:14px 12px 26px}
+  .row2{grid-template-columns:1fr}
+  .panel,.out{padding:14px}
+  .radar-head,.legend,.gal-head{flex-direction:column;align-items:stretch}
+  .radar-ctl,.gal-ctl{margin-left:0;width:100%}
+  .gal-search{width:100%}
+  .out-actions .ghost,.out-actions .btn{width:100%}
+  .pnl-title{font-size:13px}
+}
+
 /* ===== Telusur GitHub ===== */
 .gh{direction:ltr;text-align:left}
 .gh-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
