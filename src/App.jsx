@@ -338,6 +338,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     setSrc("local-template");
     setSaved(false);
     setCopied(false);
+    showPicked(L.pickedTpl.replace("{n}", id ? t.nameId : t.nameEn));
   }
 
   // ===== telusur GitHub → tarik SKILL.md publik =====
@@ -419,6 +420,10 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
         setTab("forge");
         setDraft(null);
         setLoadedFrom(`${repo} · ${b}`);
+        setTools((cur) => (cur && cur.length ? cur : ["files"]));
+        setBehaviors((cur) => (cur && cur.length ? cur : ["tajam"]));
+        setNiche(true);
+        showPicked(L.pickedRep.replace("{n}", repo));
         return true;
       } catch {
         /* coba basis berikutnya */
@@ -444,6 +449,10 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           setDraft(null);
           setLoadedFrom(`${repo} · README`);
           setGhInfo(L.ghNoSkillInfo);
+          setTools((cur) => (cur && cur.length ? cur : ["files"]));
+          setBehaviors((cur) => (cur && cur.length ? cur : ["tajam"]));
+          setNiche(true);
+          showPicked(L.pickedRep.replace("{n}", repo));
           return true;
         }
       }
@@ -457,6 +466,10 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     setDraft(null);
     setLoadedFrom(repo);
     setGhInfo(L.ghNoSkillInfo);
+    setTools((cur) => (cur && cur.length ? cur : ["files"]));
+    setBehaviors((cur) => (cur && cur.length ? cur : ["tajam"]));
+    setNiche(true);
+    showPicked(L.pickedRep.replace("{n}", repo));
     return true;
   }
   const [ghInfo, setGhInfo] = useState("");
@@ -468,6 +481,19 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     if (el) {
       el.focus();
       el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+  // ==== konfirmasi pemilihan + bawa ke panel sunting (kanan) ====
+  const [pickedNote, setPickedNote] = useState("");
+  function showPicked(msg) {
+    setPickedNote(msg);
+    window.setTimeout(() => setPickedNote(""), 4200);
+    // di layar sempit, panel sunting ada di bawah → angkat otomatis agar langsung terlihat
+    if (window.innerWidth < 940) {
+      window.setTimeout(() => {
+        const el = document.querySelector(".panel.out");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
     }
   }
   // Saat sebuah repo dipilih di Telusur → tampilkan ISI skill-nya dulu (SKILL.md / README).
@@ -532,6 +558,11 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
     }
     setBehaviors([...bs]);
     setTools([...ts]);
+    setNiche(true);
+    setAuthor("");
+    setRelated("");
+    setTags(picked.map((g) => g.cat).filter(Boolean).join(","));
+    showPicked(L.picked.replace("{n}", slugName));
   }
 
   const v = validateDesc(desc);
@@ -865,6 +896,7 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
           </div>
         </div>
         <p className="md-cap draft-auto">● {L.draftAuto}</p>
+        {pickedNote && <div className="picked-note">→ {pickedNote}</div>}
 
         {loadedFrom ? (
           <p className="md-cap">{L.composeSub}</p>
@@ -1465,6 +1497,9 @@ const LID = {
   tl: "Template lokal (siap pakai)",
   tlTag: "Kurasi kami, bukan repo. Klik → form terisi otomatis; tinggal sesuaikan & simpan.",
   tlApply: "Terapkan",
+  picked: "✓ Siap diracik — {n} sudah dimuat ke panel ini; semua isian terisi, sunting bebas lalu simpan.",
+  pickedTpl: "✓ Siap — {n} langsung terisi lengkap dari templat lokal; sunting bebas lalu simpan.",
+  pickedRep: "✓ SKILL.md dari {n} dimuat — deskripsi, ringkasan & arahan asli terisi; lengkapi lalu sunting.",
   testBtn: "Uji",
   testPass: "Teruji — siap dipakai.",
   testFix: "Perlu dibenahi sebelum dipakai.",
@@ -1698,6 +1733,10 @@ const LEN = {
   tl: "Local ready-to-use templates",
   tlTag: "Our curation, not a repo. One click fills the form — just tweak & save.",
   tlApply: "Apply",
+  onSaleStarts: "Starts",
+  picked: "✓ Ready to compose — {n} loaded into this panel; all fields filled, edit freely then save.",
+  pickedTpl: "✓ Ready — {n} pre-filled from the local template; edit freely then save.",
+  pickedRep: "✓ SKILL.md from {n} loaded — description, summary & original guidance filled; complete then edit.",
   testBtn: "Test",
   testPass: "Tested — ready to use.",
   testFix: "Needs fixes before use.",

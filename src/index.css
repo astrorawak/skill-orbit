@@ -411,6 +411,7 @@ a{color:var(--cyan)}
 @media (prefers-reduced-motion:reduce){ .modal{ transition:none; } }
 
 /* ===== cek kelayakan + cara pakai (last-mile) ===== */
+.picked-note{ margin:6px 18px 0; padding:8px 11px; border:1px solid #22C55E55; border-left:3px solid #3dd873; background:rgba(34,197,94,.08); border-radius:8px; color:#d3f5dd; font-size:12.5px; line-height:1.5; }
 .lm-actions{ margin:8px 18px 0; display:flex; gap:6px; flex-wrap:wrap; }
 .intbox{ border:1px solid var(--border2); border-radius:10px; padding:10px 12px; margin:8px 18px 0; }
 .sim-box.ok{ border-color:#22C55E77; background:rgba(34,197,94,.07); }
