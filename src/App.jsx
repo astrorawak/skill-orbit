@@ -1025,6 +1025,12 @@ function Forge({ lang, draft = null, setDraft, onHelp }) {
               </ol>
               <p className="muted lastmile-mute">🔒 {L.lm0}</p>
             </div>
+            <div className="proof">
+              <div className="proof-head">🧪 {L.proofTitle}</div>
+              <p className="proof-txt">{L.proofTxt}</p>
+              <div className="proof-out">{L.proofOut}</div>
+              <p className="muted proof-foot">{L.proofFoot}</p>
+            </div>
             <pre className="md">{markdown}</pre>
           </div>
         </div>
@@ -1497,6 +1503,10 @@ const LID = {
   tl: "Template lokal (siap pakai)",
   tlTag: "Kurasi kami, bukan repo. Klik → form terisi otomatis; tinggal sesuaikan & simpan.",
   tlApply: "Terapkan",
+  proofTitle: "Bukti end-to-end (case study)",
+  proofTxt: "'rekap-keuangan-ternak' dirakit di Forge, dipasang di asisten Hermes, lalu dijalankan dengan data nyata — file catatan dibuat & dihitung ulang:",
+  proofOut: "Saldo periode: +Rp70.000 · Stok ayam tersisa: 2 ekor · Riwayat: 5 transaksi",
+  proofFoot: "Angka di atas hasil pemeriksaan ulang nyata (bukan narasi) — kamu bisa melakukan hal yang sama setelah menyimpannya.",
   picked: "✓ Siap diracik — {n} sudah dimuat ke panel ini; semua isian terisi, sunting bebas lalu simpan.",
   pickedTpl: "✓ Siap — {n} langsung terisi lengkap dari templat lokal; sunting bebas lalu simpan.",
   pickedRep: "✓ SKILL.md dari {n} dimuat — deskripsi, ringkasan & arahan asli terisi; lengkapi lalu sunting.",
@@ -1733,6 +1743,10 @@ const LEN = {
   tl: "Local ready-to-use templates",
   tlTag: "Our curation, not a repo. One click fills the form — just tweak & save.",
   tlApply: "Apply",
+  proofTitle: "End-to-end proof (case study)",
+  proofTxt: "'rekap-keuangan-ternak' was built in Forge, installed in the Hermes assistant, then run with real data — a ledger file was created & recomputed:",
+  proofOut: "Period balance: +Rp70,000 · Remaining chicken stock: 2 · History: 5 entries",
+  proofFoot: "These figures come from a real re-check, not narration — you can do the same once you save it.",
   onSaleStarts: "Starts",
   picked: "✓ Ready to compose — {n} loaded into this panel; all fields filled, edit freely then save.",
   pickedTpl: "✓ Ready — {n} pre-filled from the local template; edit freely then save.",
